@@ -19,6 +19,7 @@ public class Flight {
         this.seatsAvailable = plane.getCapacity();
     }
 
+    
     public boolean bookSeats(int count) {
         if (count <= seatsAvailable) {
             seatsAvailable -= count;
