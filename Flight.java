@@ -50,6 +50,10 @@ public class Flight {
         return price;
     }
 
+    public Plane getPlane() {
+        return plane;
+    }
+
     //Setters
     public void setOrigin(String origin) {
         this.origin = origin;
