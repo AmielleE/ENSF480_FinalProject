@@ -3,17 +3,19 @@ public class Flight {
     private String origin;
     private String destination;
     private String date;
-    private String flightTime;
+    private String departureTime;
+    private String arrivalTime;
     private double price;
     private Plane plane;
     private int seatsAvailable;
 
-    public Flight(String flightID, String origin, String destination, String date, String time, double price, Plane plane) {
+    public Flight(String flightID, String origin, String destination, String date, String departureTime, String arrivalTime, double price, Plane plane) {
         this.flightID = flightID;
         this.origin = origin;
         this.destination = destination;
         this.date = date;
-        this.flightTime = time;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
         this.price = price;
         this.plane = plane;
         this.seatsAvailable = plane.getCapacity();
@@ -36,8 +38,12 @@ public class Flight {
         return date;
     }
 
-    public String getTime() {
-        return flightTime;
+    public String getDepartureTime() {
+        return departureTime;
+    }
+
+    public String getArrivalTime() {
+        return arrivalTime;
     }
 
     public double getPrice() {
@@ -57,8 +63,12 @@ public class Flight {
         this.date = date;
     }
 
-    public void setFlightTime(String flightTime) {
-        this.flightTime = flightTime;
+    public void setDepartureTime(String departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public void setArrivalTime(String arrivalTime) {
+        this.arrivalTime = arrivalTime;
     }
 
     public void setPrice(double price) {

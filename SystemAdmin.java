@@ -16,8 +16,8 @@ public class SystemAdmin extends User {
         flightController.removeFlight(flightID);
     }
 
-    public void updateFlight(String flightID, String newOrigin, String newDestination, String newDate, String newTime, Double newPrice, Plane newPlane) {
-        flightController.updateFlight(flightID, newOrigin, newDestination, newDate, newTime, newPrice, newPlane);
+    public void updateFlight(String flightID, String newOrigin, String newDestination, String newDate, String newDepartureTime, String newArrivalTime, Double newPrice, Plane newPlane) {
+        flightController.updateFlight(flightID, newOrigin, newDestination, newDate, newDepartureTime, newArrivalTime, newPrice, newPlane);
     }
 
     public void manageAircraft(String aircraftID, String action) {
