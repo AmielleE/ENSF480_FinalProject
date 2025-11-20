@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class SystemAdmin extends User {
 
     private ManageFlightController flightController;
@@ -31,4 +33,9 @@ public class SystemAdmin extends User {
     public void updateSchedule(String flightID, String newDate) {
         System.out.println("Updating schedule for flight " + flightID + " to " + newDate);
     }
+
+    public List<Flight> viewAllFlights() {
+    return flightController.viewFlights("", "", ""); // empty strings mean no filter
+}
+
 }

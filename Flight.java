@@ -55,6 +55,10 @@ public class Flight {
     }
 
     //Setters
+    public String setFlightID() { //MIGHT REMOVE
+        return flightID;
+    }
+
     public void setOrigin(String origin) {
         this.origin = origin;
     }
