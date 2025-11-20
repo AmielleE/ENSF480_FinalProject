@@ -1,21 +1,32 @@
 public class Booking {
-    private int confirmationNumber;
+    private int bookingId;
     private Customer customer;
     private Flight flight;
-    private int seatsBooked;
+    private int seats;
+    private double totalPrice;
 
-    public Booking(int confirmationNumber, Customer customer, Flight flight, int seatsBooked) {
-        this.confirmationNumber = confirmationNumber;
+    public Booking(int bookingId, Customer customer, Flight flight, int seats) {
+        this.bookingId = bookingId;
         this.customer = customer;
         this.flight = flight;
-        this.seatsBooked = seatsBooked;
+        this.seats = seats;
+        this.totalPrice = seats * (flight != null ? flight.getPrice() : 0.0);
     }
 
-    public int getConfirmationNumber() { return confirmationNumber; }
+    public int getBookingId() { return bookingId; }
     public Customer getCustomer() { return customer; }
+    public Flight getFlight() { return flight; }
+    public int getSeats() { return seats; }
+    public double getTotalPrice() { return totalPrice; }
 
-    public void cancel() {
-        flight.restoreSeats(seatsBooked);
-        System.out.println("Booking canceled.");
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", customer=" + customer.getFirstName() + " " + customer.getLastName() +
+                ", flight=" + (flight != null ? flight.getFlightID() : "null") +
+                ", seats=" + seats +
+                ", totalPrice=" + totalPrice +
+                '}';
     }
 }

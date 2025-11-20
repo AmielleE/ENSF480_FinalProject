@@ -1,23 +1,24 @@
-public abstract class User {
-    protected int userID;
-    protected String firstName;
-    protected String lastName;
-    protected String email;
-    protected String password;
+public class User {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
 
-    public User(int userID, String firstName, String lastName, String email, String password) {
-        this.userID = userID;
+    public User(int id, String firstName, String lastName, String email, String password) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
     }
 
-    public boolean login(String inputEmail, String inputPass) {
-        return email.equals(inputEmail) && password.equals(inputPass);
-    }
+    public int getId() { return id; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
 
-    public void logout() {
-        System.out.println(firstName + " logged out.");
-    }
+    public void setEmail(String email) { this.email = email; }
+    public void setPassword(String password) { this.password = password; }
 }

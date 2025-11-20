@@ -1,13 +1,18 @@
 public class PaymentInfo {
+    private String nameOnCard;
     private String cardNumber;
-    private String name;
-    private int securityCode;
-    private String expiryDate;
+    private String expiry; 
+    private String cvv;
 
-    public PaymentInfo(String cardNumber, String name, int code, String expiry) {
+    public PaymentInfo(String nameOnCard, String cardNumber, String expiry, String cvv) {
+        this.nameOnCard = nameOnCard;
         this.cardNumber = cardNumber;
-        this.name = name;
-        this.securityCode = code;
-        this.expiryDate = expiry;
+        this.expiry = expiry;
+        this.cvv = cvv;
     }
+
+    public String getName() { return nameOnCard; }
+    public String getCardNumber() { return cardNumber; }
+    public String getExpiry() { return expiry; }
+    public String getCvv() { return cvv; }
 }

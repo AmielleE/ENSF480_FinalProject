@@ -1,9 +1,12 @@
+import java.util.List;
+
 public class FlightAgent extends User {
 
     private BookingController bookingController;
     private ManageFlightController flightController;
 
-    public FlightAgent(int id, String fn, String ln, String email, String pw, BookingController bc, ManageFlightController fc) {
+    public FlightAgent(int id, String fn, String ln, String email, String pw,
+                       BookingController bc, ManageFlightController fc) {
         super(id, fn, ln, email, pw);
         this.bookingController = bc;
         this.flightController = fc;
@@ -18,8 +21,17 @@ public class FlightAgent extends User {
     }
 
     public void modifyCustomerBooking(int bookingID, Flight newFlight, int seats, Customer customer) {
+        synchronized (newFlight) {
+            if (!newFlight.bookSeats(seats)) {
+                System.out.println("Modification failed: Not enough seats available.");
+                return;
+            }
+        }
+
         bookingController.cancelBooking(bookingID);
         bookingController.makeBooking(newFlight, customer, seats);
+
+        System.out.println("Booking modified successfully.");
     }
 
     public void cancelCustomerBooking(int bookingID) {
@@ -27,7 +39,7 @@ public class FlightAgent extends User {
     }
 
     public void viewCustomerDetails(Customer c) {
-        System.out.println("Customer: " + c.firstName + " " + c.lastName);
-        System.out.println("Email: " + c.email);
+        System.out.println("Customer: " + c.getFirstName() + " " + c.getLastName());
+        System.out.println("Email: " + c.getEmail());
     }
 }
