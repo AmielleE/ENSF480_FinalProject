@@ -19,6 +19,30 @@ public class Flight {
         this.seatsAvailable = plane.getCapacity();
     }
 
+    //Getters
+    public String getFlightID() {
+        return flightID;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return flightTime;
+    }
+
+    public double getPrice() {
+        return price;
+    }
     
     public boolean bookSeats(int count) {
         if (count <= seatsAvailable) {

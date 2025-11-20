@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Customer extends User {
 
     private PaymentInfo paymentInfo;
@@ -40,7 +42,7 @@ public class Customer extends User {
         return paymentController.pay(info);
     }
 
-    public void receiveMonthlyPromotion() {
+    public void receivePromotion() {
         System.out.println("Monthly promotion received.");
     }
 
