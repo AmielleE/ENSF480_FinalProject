@@ -43,7 +43,33 @@ public class Flight {
     public double getPrice() {
         return price;
     }
+
+    //Setters
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setFlightTime(String flightTime) {
+        this.flightTime = flightTime;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setPlane(Plane plane) {
+        this.plane = plane;
+    }
     
+    //Booking
     public boolean bookSeats(int count) {
         if (count <= seatsAvailable) {
             seatsAvailable -= count;

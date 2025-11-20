@@ -12,4 +12,7 @@ public class Plane {
     }
 
     public int getCapacity() { return capacity; }
+    public String getAircraftID() { return aircraftID; }
+    public String getAirline() { return airline; }
+    public String getModel() { return model; }
 }

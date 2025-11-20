@@ -22,4 +22,20 @@ public class ManageFlightController {
     public void removeFlight(String flightID) {
         flights.removeIf(f -> f.getFlightID().equals(flightID));
     }
+
+    public void updateFlight(String flightID, String newOrigin, String newDestination, String newDate, String newTime, Double newPrice, Plane newPlane) {
+        for (Flight f : flights) {
+            if (f.getFlightID().equals(flightID)) {
+                if (newOrigin != null && !newOrigin.isEmpty()) {f.setOrigin(newOrigin);}
+                if (newDestination != null && !newDestination.isEmpty()) {f.setDestination(newDestination);}
+                if (newDate != null && !newDate.isEmpty()) {f.setDate(newDate);}
+                if (newTime != null && !newTime.isEmpty()) {f.setFlightTime(newTime);}
+                if (newPrice != null) {f.setPrice(newPrice);}
+                if (newPlane != null) {f.setPlane(newPlane);}
+                return;
+            }
+        }
+    }
+
+
 }
