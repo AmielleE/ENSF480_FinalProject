@@ -15,13 +15,12 @@ public class FlightAgent extends User {
         return flightController.viewFlights(origin, destination, date);
     }
 
-    public int createCustomerBooking(Customer customer, Flight flight, int seats) {
-        return bookingController.makeBooking(flight, customer, seats);
+    public int createCustomerBooking(Customer customer, Flight flight, List<String> seatNumbers) {
+        return bookingController.makeBooking(flight, customer, seatNumbers);
     }
 
-    public void modifyCustomerBooking(int bookingID, Flight newFlight, int seats, Customer customer) {
-        bookingController.cancelBooking(bookingID);
-        bookingController.makeBooking(newFlight, customer, seats);
+    public boolean modifyCustomerBooking(int bookingID, Flight newFlight, List<String> newSeats) {
+        return bookingController.modifyBooking(bookingID, newFlight, newSeats);
     }
 
     public void cancelCustomerBooking(int bookingID) {

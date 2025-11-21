@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Flight {
     private String flightID;
     private String origin;
@@ -7,6 +10,10 @@ public class Flight {
     private String arrivalTime;
     private double price;
     private Plane plane;
+    private SeatMap seatMap;
+
+    private List<Customer> passengers;
+    private List<Booking> reservations;
 
     public Flight(String flightID, String origin, String destination, String date, String departureTime, String arrivalTime, double price, Plane plane) {
         this.flightID = flightID;
@@ -17,9 +24,13 @@ public class Flight {
         this.arrivalTime = arrivalTime;
         this.price = price;
         this.plane = plane;
+
+        this.seatMap = new SeatMap(plane);
+        this.passengers = new ArrayList<>();
+        this.reservations = new ArrayList<>();
     }
 
-    //Getters
+    // Getters
     public String getFlightID() { return flightID; }
     public String getOrigin() { return origin; }
     public String getDestination() { return destination; }
@@ -28,16 +39,24 @@ public class Flight {
     public String getArrivalTime() { return arrivalTime; }
     public double getPrice() { return price; }
     public Plane getPlane() { return plane; }
+    public SeatMap getSeatMap() { return seatMap; }
 
-    //Setters
+    public List<Customer> getPassengers() { return passengers; }
+    public List<Booking> getReservations() { return reservations; }
+
+    // Setters
     public void setOrigin(String origin) { this.origin = origin; }
     public void setDestination(String destination) { this.destination = destination; }
     public void setDate(String date) { this.date = date; }
     public void setDepartureTime(String departureTime) { this.departureTime = departureTime; }
     public void setArrivalTime(String arrivalTime) { this.arrivalTime = arrivalTime; }
     public void setPrice(double price) { this.price = price; }
-
-    public void setPlane(Plane plane) {
-        this.plane = plane;
+    public void setPlane(Plane plane) { 
+        this.plane = plane; 
+        this.seatMap = new SeatMap(plane); // reset seat map for new plane
     }
+
+    // Add passenger/reservation
+    public void addPassenger(Customer c) { passengers.add(c); }
+    public void addReservation(Booking b) { reservations.add(b); }
 }

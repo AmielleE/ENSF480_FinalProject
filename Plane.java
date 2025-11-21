@@ -4,8 +4,7 @@ public class Plane {
     private String airline;
     private int rows;
     private int cols;
-
-    private boolean[][] seatMap;
+    private SeatMap seatMap;
 
     public Plane(String aircraftID, String model, String airline, int rows, int cols) {
         this.aircraftID = aircraftID;
@@ -13,35 +12,23 @@ public class Plane {
         this.airline = airline;
         this.rows = rows;
         this.cols = cols;
-
-        seatMap = new boolean[rows][cols];
+        this.seatMap = new SeatMap(this); // initialize seat map
     }
 
+    // Getters
     public String getAircraftID() { return aircraftID; }
     public String getModel() { return model; }
     public String getAirline() { return airline; }
     public int getRows() { return rows; }
     public int getCols() { return cols; }
-    public boolean[][] getSeatMap() { return seatMap; }
 
-    public String getSeatLabel(int row, int col) {
-        char rowLetter = (char) ('A' + row);
-        return rowLetter + String.valueOf(col + 1);
+    public SeatMap getSeatMap() { return seatMap; }
+
+    public boolean bookSeat(String seatLabel) {
+        return seatMap.bookSeat(seatLabel);
     }
 
-    public boolean isSeatAvailable(int row, int col) {
-        return !seatMap[row][col];
-    }
-
-    public boolean bookSeat(int row, int col) {
-        if (!seatMap[row][col]) {
-            seatMap[row][col] = true;
-            return true;
-        }
-        return false;
-    }
-
-    public void cancelSeat(int row, int col) {
-        seatMap[row][col] = false;
+    public void cancelSeat(String seatLabel) {
+        seatMap.cancelSeat(seatLabel);
     }
 }
