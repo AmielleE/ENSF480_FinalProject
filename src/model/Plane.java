@@ -1,3 +1,5 @@
+package model;
+
 public class Plane {
     private String aircraftID;
     private String model;

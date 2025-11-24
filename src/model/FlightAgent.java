@@ -1,3 +1,4 @@
+package model;
 import java.util.List;
 
 public class FlightAgent extends User {
@@ -6,7 +7,7 @@ public class FlightAgent extends User {
     private ManageFlightController flightController;
 
     public FlightAgent(int id, String fn, String ln, String email, String pw, BookingController bc, ManageFlightController fc) {
-        super(id, fn, ln, email, pw);
+        super(id, fn, ln, email, pw, "Agent");
         this.bookingController = bc;
         this.flightController = fc;
     }

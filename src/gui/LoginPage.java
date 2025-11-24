@@ -1,12 +1,19 @@
+package gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import dao.user_dao;
+import model.Customer;
 
 public class LoginPage extends JFrame {
 
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginBtn;
+    private JButton registerBtn;
+
+    private user_dao userDao = new user_dao();
 
     public LoginPage() {
         setTitle("Login Page");
@@ -102,6 +109,29 @@ public class LoginPage extends JFrame {
             }
             else {
                 JOptionPane.showMessageDialog(null, "Incorrect username or password");
+            }
+        });
+
+        registerBtn.addActionListener(e -> {
+            String fn = JOptionPane.showInputDialog(this, "First name:");
+            if (fn == null) return;
+
+            String ln = JOptionPane.showInputDialog(this, "Last name:");
+            if (ln == null) return;
+
+            String email = JOptionPane.showInputDialog(this, "Email:");
+            if (email == null) return;
+
+            String pw = JOptionPane.showInputDialog(this, "Password:");
+            if (pw == null) return;
+
+            Customer newCustomer = new Customer(fn, ln, email, pw);
+            int id = userDao.addUser(newCustomer);
+
+            if (id > 0) {
+                JOptionPane.showMessageDialog(this, "Account created succesfully!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error creating account.");
             }
         });
     }

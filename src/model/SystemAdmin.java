@@ -1,3 +1,5 @@
+package model;
+
 import java.util.List;
 
 public class SystemAdmin extends User {
@@ -6,7 +8,7 @@ public class SystemAdmin extends User {
 
     public SystemAdmin(int id, String fn, String ln, String email, String pw, ManageFlightController fc) {
 
-        super(id, fn, ln, email, pw);
+        super(id, fn, ln, email, pw, "Admin");
         this.flightController = fc;
     }
 
