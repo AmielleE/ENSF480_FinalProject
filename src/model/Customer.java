@@ -1,3 +1,10 @@
+package model;
+
+import java.util.List;
+import controller.BookingController;
+import controller.ManageFlightController;
+import controller.PaymentController;
+
 public class Customer extends User {
 
     private PaymentInfo paymentInfo;
@@ -7,18 +14,22 @@ public class Customer extends User {
     private PaymentController paymentController;
 
     public Customer(int id, String fn, String ln, String email, String pw, BookingController bc, ManageFlightController fc, PaymentController pc) {
-        super(id, fn, ln, email, pw);
+        super(id, fn, ln, email, pw, "Customer");
         this.bookingController = bc;
         this.flightController = fc;
         this.paymentController = pc;
+    }
+
+    public Customer(String fn, String ln, String email, String pw) {
+        super(fn, ln, email, pw, "Customer");
     }
 
     public List<Flight> searchFlights(String origin, String destination, String date) {
         return flightController.viewFlights(origin, destination, date);
     }
 
-    public int makeBooking(Flight flight, int seats) {
-        return bookingController.makeBooking(flight, this, seats);
+    public int makeBooking(Flight flight, List<String> seatNumbers) {
+        return bookingController.makeBooking(flight, this, seatNumbers);
     }
 
     public void cancelBooking(int bookingID) {
@@ -29,10 +40,8 @@ public class Customer extends User {
         return bookingController.viewBookingDetails(bookingID);
     }
 
-    public int modifyBooking(int bookingID, Flight newFlight, int newSeats) {
-        //NOT DONE YET, NEED TO ADD MORE STUFF 
-        cancelBooking(bookingID);
-        return makeBooking(newFlight, newSeats);
+    public boolean modifyBooking(int bookingID, Flight newFlight, List<String> newSeats) {
+        return bookingController.modifyBooking(bookingID, newFlight, newSeats);
     }
 
     public boolean makePayment(PaymentInfo info) {
@@ -40,7 +49,7 @@ public class Customer extends User {
         return paymentController.pay(info);
     }
 
-    public void receiveMonthlyPromotion() {
+    public void receivePromotion() {
         System.out.println("Monthly promotion received.");
     }
 

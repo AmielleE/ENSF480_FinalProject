@@ -1,3 +1,5 @@
+package controller;
+
 public class PaymentController {
 
     public boolean pay(PaymentInfo info) {

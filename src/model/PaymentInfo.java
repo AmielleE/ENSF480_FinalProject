@@ -1,3 +1,5 @@
+package model;
+
 public class PaymentInfo {
     private String cardNumber;
     private String name;
