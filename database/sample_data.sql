@@ -1,0 +1,1 @@
+INSERT INTO planes VALUES (s)
