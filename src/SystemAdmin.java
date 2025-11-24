@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class SystemAdmin extends User {
 
     private ManageFlightController flightController;
@@ -16,8 +18,8 @@ public class SystemAdmin extends User {
         flightController.removeFlight(flightID);
     }
 
-    public void updateFlight(Flight updatedFlight) {
-        flightController.updateFlight(updatedFlight);
+    public void updateFlight(String flightID, String newOrigin, String newDestination, String newDate, String newDepartureTime, String newArrivalTime, Double newPrice, Plane newPlane) {
+        flightController.updateFlight(flightID, newOrigin, newDestination, newDate, newDepartureTime, newArrivalTime, newPrice, newPlane);
     }
 
     public void manageAircraft(String aircraftID, String action) {
@@ -31,4 +33,9 @@ public class SystemAdmin extends User {
     public void updateSchedule(String flightID, String newDate) {
         System.out.println("Updating schedule for flight " + flightID + " to " + newDate);
     }
+
+    public List<Flight> viewAllFlights() {
+    return flightController.viewFlights("", "", ""); // empty strings mean no filter
+}
+
 }

@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Customer extends User {
 
     private PaymentInfo paymentInfo;
@@ -17,8 +19,8 @@ public class Customer extends User {
         return flightController.viewFlights(origin, destination, date);
     }
 
-    public int makeBooking(Flight flight, int seats) {
-        return bookingController.makeBooking(flight, this, seats);
+    public int makeBooking(Flight flight, List<String> seatNumbers) {
+        return bookingController.makeBooking(flight, this, seatNumbers);
     }
 
     public void cancelBooking(int bookingID) {
@@ -29,10 +31,8 @@ public class Customer extends User {
         return bookingController.viewBookingDetails(bookingID);
     }
 
-    public int modifyBooking(int bookingID, Flight newFlight, int newSeats) {
-        //NOT DONE YET, NEED TO ADD MORE STUFF 
-        cancelBooking(bookingID);
-        return makeBooking(newFlight, newSeats);
+    public boolean modifyBooking(int bookingID, Flight newFlight, List<String> newSeats) {
+        return bookingController.modifyBooking(bookingID, newFlight, newSeats);
     }
 
     public boolean makePayment(PaymentInfo info) {
@@ -40,7 +40,7 @@ public class Customer extends User {
         return paymentController.pay(info);
     }
 
-    public void receiveMonthlyPromotion() {
+    public void receivePromotion() {
         System.out.println("Monthly promotion received.");
     }
 
