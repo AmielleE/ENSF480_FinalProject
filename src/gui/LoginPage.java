@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import dao.user_dao;
 import model.Customer;
+import model.User;
 
 public class LoginPage extends JFrame {
 
@@ -86,32 +87,46 @@ public class LoginPage extends JFrame {
         loginBtn = new JButton("Login");
         mainPanel.add(loginBtn, gbc);
 
-        add(mainPanel, BorderLayout.CENTER);
+        // REGISTER BUTTON ()
+        gbc.gridy = 3;
+        registerBtn = new JButton("Register");
+        mainPanel.add(registerBtn, gbc);
+
+         add(mainPanel, BorderLayout.CENTER);
 
         // ==========================
         // LOGIN LOGIC
         // ==========================
         loginBtn.addActionListener(e -> {
-            String user = usernameField.getText();
-            String pass = new String(passwordField.getPassword());
+            String email = usernameField.getText();
+            String password = new String(passwordField.getPassword());
 
-            if(user.equals("user") && pass.equals("user")) {
-                new HomePage();
-                dispose();
+            boolean validLogin = userDao.validateLogin(email, password);
+
+            if (!validLogin) {
+                JOptionPane.showMessageDialog(this, "Incorrect email or password", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
-            else if(user.equals("admin") && pass.equals("admin")) {
-                new AdminPage();
-                dispose();
+
+            String role = userDao.getRoleByEmail(email);
+
+            switch (role) {
+                case "Customer":
+                    new HomePage();
+                    break;
+                case "Agent":
+                    new AgentPage();
+                    break;
+                case "Admin":
+                    new AdminPage();
+                    break;
             }
-            else if(user.equals("agent") && pass.equals("agent")) {
-                new AgentPage();
-                dispose();
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Incorrect username or password");
-            }
+
+            dispose();
         });
 
+        // ==========================
+        // REGISTER LOGIC
+        // ==========================
         registerBtn.addActionListener(e -> {
             String fn = JOptionPane.showInputDialog(this, "First name:");
             if (fn == null) return;
@@ -129,7 +144,7 @@ public class LoginPage extends JFrame {
             int id = userDao.addUser(newCustomer);
 
             if (id > 0) {
-                JOptionPane.showMessageDialog(this, "Account created succesfully!");
+                JOptionPane.showMessageDialog(this, "Account created succesfully! Your ID: " + id);
             } else {
                 JOptionPane.showMessageDialog(this, "Error creating account.");
             }

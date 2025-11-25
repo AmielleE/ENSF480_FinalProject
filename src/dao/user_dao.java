@@ -4,23 +4,29 @@ import java.sql.*;
 import model.User;
 
 public class user_dao {
-    public boolean addUser(User user) {
+    public int addUser(User user) {
         String sql = "INSERT INTO users (firstName, lastName, email, password, role) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, user.getFirstName());
-                stmt.setString(2, user.getLastName());
-                stmt.setString(3, user.getEmail());
-                stmt.setString(4, user.getPassword());
-                stmt.setString(5, user.getRole());
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1, user.getFirstName());
+                statement.setString(2, user.getLastName());
+                statement.setString(3, user.getEmail());
+                statement.setString(4, user.getPassword());
+                statement.setString(5, user.getRole());
 
-                stmt.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
+                int rows = statement.executeUpdate();
+                if (rows == 0) return -1;
+
+                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                    if (resultSet.next()) {
+                        return resultSet.getInt(1);
+                    }
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public boolean validateLogin(String email, String password) {
