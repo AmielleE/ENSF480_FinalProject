@@ -3,7 +3,7 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import dao.user_dao;
+import dao.users_dao;
 import model.Customer;
 import model.User;
 
@@ -14,7 +14,7 @@ public class LoginPage extends JFrame {
     private JButton loginBtn;
     private JButton registerBtn;
 
-    private user_dao userDao = new user_dao();
+    private users_dao userDao = new users_dao();
 
     public LoginPage() {
         setTitle("Login Page");
@@ -92,7 +92,7 @@ public class LoginPage extends JFrame {
         registerBtn = new JButton("Register");
         mainPanel.add(registerBtn, gbc);
 
-         add(mainPanel, BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.CENTER);
 
         // ==========================
         // LOGIN LOGIC
@@ -105,6 +105,7 @@ public class LoginPage extends JFrame {
 
             if (!validLogin) {
                 JOptionPane.showMessageDialog(this, "Incorrect email or password", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
             String role = userDao.getRoleByEmail(email);
@@ -120,7 +121,6 @@ public class LoginPage extends JFrame {
                     new AdminPage();
                     break;
             }
-
             dispose();
         });
 
@@ -128,26 +128,8 @@ public class LoginPage extends JFrame {
         // REGISTER LOGIC
         // ==========================
         registerBtn.addActionListener(e -> {
-            String fn = JOptionPane.showInputDialog(this, "First name:");
-            if (fn == null) return;
-
-            String ln = JOptionPane.showInputDialog(this, "Last name:");
-            if (ln == null) return;
-
-            String email = JOptionPane.showInputDialog(this, "Email:");
-            if (email == null) return;
-
-            String pw = JOptionPane.showInputDialog(this, "Password:");
-            if (pw == null) return;
-
-            Customer newCustomer = new Customer(fn, ln, email, pw);
-            int id = userDao.addUser(newCustomer);
-
-            if (id > 0) {
-                JOptionPane.showMessageDialog(this, "Account created succesfully! Your ID: " + id);
-            } else {
-                JOptionPane.showMessageDialog(this, "Error creating account.");
-            }
+            new RegisterPage().setVisible(true);
+            dispose();
         });
     }
 

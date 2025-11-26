@@ -12,6 +12,7 @@ CREATE TABLE users (
 CREATE TABLE planes (
 	aircraftID VARCHAR(10) PRIMARY KEY,
     model VARCHAR(50) NOT NULL,
+    airline VARCHAR(50) NOT NULL,
     numRows INT NOT NULL,
     seatsPerRow INT NOT NULL,
     capacity INT NOT NULL

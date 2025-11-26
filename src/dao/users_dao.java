@@ -3,7 +3,7 @@ package dao;
 import java.sql.*;
 import model.User;
 
-public class user_dao {
+public class users_dao {
     public int addUser(User user) {
         String sql = "INSERT INTO users (firstName, lastName, email, password, role) VALUES (?, ?, ?, ?, ?)";
 
