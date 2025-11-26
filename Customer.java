@@ -8,11 +8,8 @@ public class Customer extends User {
     private ManageFlightController flightController;
     private PaymentController paymentController;
 
-    public Customer(int id, String fn, String ln, String email, String pw, BookingController bc, ManageFlightController fc, PaymentController pc) {
-        super(id, fn, ln, email, pw);
-        this.bookingController = bc;
-        this.flightController = fc;
-        this.paymentController = pc;
+    public Customer(int id, String firstName, String lastName, String email, String password) {
+        super(id, firstName, lastName, email, password);
     }
 
     public List<Flight> searchFlights(String origin, String destination, String date) {
