@@ -2,7 +2,5 @@
     "java.project.sourcePaths": [
         "src"
     ],
-    "java.project.referencedLibraries": [
-        "c:\\Users\\joshu\\Desktop\\ENSF480\\term_project\\ENSF480_FinalProject\\lib\\mysql-connector-j-9.5.0.jar"
-    ]
+    "java.project.referencedLibraries": []
 }

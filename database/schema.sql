@@ -13,8 +13,8 @@ CREATE TABLE planes (
 	aircraftID VARCHAR(10) PRIMARY KEY,
     model VARCHAR(50) NOT NULL,
     airline VARCHAR(50) NOT NULL,
-    numRows INT NOT NULL,
-    seatsPerRow INT NOT NULL,
+    rows INT NOT NULL,
+    cols INT NOT NULL,
     capacity INT NOT NULL
 );
 
@@ -40,9 +40,8 @@ CREATE TABLE bookings (
 );
 
 CREATE TABLE payment_info (
-    userID INT PRIMARY KEY,
+    name VARCHAR(50) PRIMARY KEY,
     cardNumber INT NOT NULL,
     secuirtyCode INT NOT NULL,
     expiryDate VARCHAR(5) NOT NULL,
-    FOREIGN KEY (userID) REFERENCES users(userID)
 )
