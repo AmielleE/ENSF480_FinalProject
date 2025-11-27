@@ -3,6 +3,10 @@ package controller;
 import java.util.HashMap;
 import java.util.List;
 
+import model.Booking;
+import model.Customer;
+import model.Flight;
+
 public class BookingController {
 
     private HashMap<Integer, Booking> bookings = new HashMap<>();

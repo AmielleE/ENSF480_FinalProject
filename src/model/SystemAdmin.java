@@ -1,15 +1,16 @@
 package model;
 
 import java.util.List;
+import controller.ManageFlightController;
 
 public class SystemAdmin extends User {
 
     private ManageFlightController flightController;
 
     public SystemAdmin(int id, String fn, String ln, String email, String pw, ManageFlightController fc) {
-
-        super(id, fn, ln, email, pw, "Admin");
+        super(id, fn, ln, email, pw);
         this.flightController = fc;
+        this.role = "Admin";
     }
 
     public void addFlight(Flight flight) {

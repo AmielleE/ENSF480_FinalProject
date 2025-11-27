@@ -3,6 +3,6 @@
         "src"
     ],
     "java.project.referencedLibraries": [
-        "lib\\sqlite-jdbc-3.51.0.0.jar"
+        "c:\\Users\\joshu\\Desktop\\ENSF480\\term_project\\ENSF480_FinalProject\\lib\\sqlite-jdbc-3.51.0.0.jar"
     ]
 }

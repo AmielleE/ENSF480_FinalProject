@@ -1,9 +1,18 @@
 package gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import controller.BookingController;
+
+import model.Customer;
+import model.Flight;
+import model.Plane;
+import model.SeatMap;
+
 
 // A simple GUI to test bookings and seat map
 public class FlightBookingGUI {

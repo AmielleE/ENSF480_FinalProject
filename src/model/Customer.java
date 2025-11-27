@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+
 import controller.BookingController;
 import controller.ManageFlightController;
 import controller.PaymentController;
@@ -14,14 +15,16 @@ public class Customer extends User {
     private PaymentController paymentController;
 
     public Customer(int id, String fn, String ln, String email, String pw, BookingController bc, ManageFlightController fc, PaymentController pc) {
-        super(id, fn, ln, email, pw, "Customer");
+        super(id, fn, ln, email, pw);
         this.bookingController = bc;
         this.flightController = fc;
         this.paymentController = pc;
+        this.role = "Customer";
     }
 
     public Customer(String fn, String ln, String email, String pw) {
-        super(fn, ln, email, pw, "Customer");
+        super(0, fn, ln, email, pw);
+        this.role = "Customer";
     }
 
     public List<Flight> searchFlights(String origin, String destination, String date) {
