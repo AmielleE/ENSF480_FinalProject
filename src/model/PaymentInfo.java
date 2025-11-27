@@ -12,4 +12,9 @@ public class PaymentInfo {
         this.securityCode = code;
         this.expiryDate = expiry;
     }
+
+    public String getCardNumber() {return cardNumber;}
+    public String getName() {return name;}
+    public int getSecurityCode() {return securityCode;}
+    public String getExpiryDate() {return expiryDate;}
 }

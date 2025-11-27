@@ -1,5 +1,7 @@
 package controller;
 
+import model.PaymentInfo;
+
 public class PaymentController {
 
     public boolean pay(PaymentInfo info) {

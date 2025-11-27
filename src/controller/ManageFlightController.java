@@ -3,6 +3,9 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Flight;
+import model.Plane;
+
 public class ManageFlightController {
 
     private List<Flight> flights = new ArrayList<>();
