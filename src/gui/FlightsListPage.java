@@ -15,23 +15,31 @@ public class FlightsListPage extends JFrame {
         getContentPane().setBackground(bg);
         setLayout(new BorderLayout());
 
-        // ===== TOP BAR WITH BACK BUTTON =====
-        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // ===== TOP BAR WITH SEPARATED BUTTONS =====
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(bg);
 
+        // Left side: Promotion
+        JButton promotionButton = new JButton("Promotion!");
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setBackground(bg);
+        leftPanel.add(promotionButton);
+
+        // Right side: Back to Home
         JButton backButton = new JButton("Back to Home");
-
         backButton.addActionListener(e -> {
             dispose();
             new HomePage().setVisible(true);
         });
 
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setBackground(bg);
+        rightPanel.add(backButton);
 
-        JButton promotionButton =  new JButton("Promotion!");
+        topBar.add(leftPanel, BorderLayout.WEST);
+        topBar.add(rightPanel, BorderLayout.EAST);
 
         add(topBar, BorderLayout.SOUTH);
-        topBar.setBackground(bg);
-        topBar.add(backButton);
-        topBar.add(promotionButton);
 
         // ---- MAIN PANEL ----
         JPanel mainPanel = new JPanel(new GridLayout(1, 1));
@@ -94,7 +102,6 @@ public class FlightsListPage extends JFrame {
             leftInfo.add(fromLabel);
             leftInfo.add(Box.createVerticalStrut(5));
             leftInfo.add(toLabel);
-
             leftInfo.add(Box.createVerticalGlue());
             leftInfo.add(flightNumberLabel);
 
@@ -134,9 +141,5 @@ public class FlightsListPage extends JFrame {
         mainPanel.add(scrollPane);
 
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(FlightsListPage::new);
     }
 }
