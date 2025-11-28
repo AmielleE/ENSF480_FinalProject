@@ -28,28 +28,33 @@ public class planes_dao {
     }
 
     public Plane getPlaneByID(String aircraftID) {
-        String sql = "SELECT aircraftID, model, numRows, seatsPerRow" + "FROM planes WHERE aircraftID = ?";
+        String sql = "SELECT aircraftID, model, airline, rows, cols, capacity " +
+                    "FROM planes WHERE aircraftID = ?";
 
         try (Connection connection = database.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, aircraftID);
 
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        String id = resultSet.getString("aircraftID");
-                        String model = resultSet.getString("model");
-                        String airline = resultSet.getString("airline");
-                        int rows = resultSet.getInt("numRows");
-                        int cols = resultSet.getInt("seatsPerRow");
+            statement.setString(1, aircraftID);
 
-                        return new Plane(id, model, "", rows, cols);
-                    }
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String id = resultSet.getString("aircraftID");
+                    String model = resultSet.getString("model");
+                    String airline = resultSet.getString("airline");
+                    int rows = resultSet.getInt("rows");
+                    int cols = resultSet.getInt("cols");
+                    int capacity = resultSet.getInt("capacity");
+
+                    return new Plane(id, model, airline, rows, cols, capacity);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
-            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
+
 
     public List<Plane> getAllPlanes() {
         List<Plane> planes = new ArrayList<>();

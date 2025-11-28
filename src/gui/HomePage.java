@@ -1,9 +1,14 @@
 package gui;
 
 import javax.swing.*;
+
+import dao.flights_dao;
+import model.Flight;
+
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class HomePage extends JFrame {
@@ -135,8 +140,17 @@ public class HomePage extends JFrame {
         bottomPanel.add(logoutBtn, BorderLayout.EAST);
 
         searchBtn.addActionListener(e -> {
-            dispose();
+            String origin = fromField.getText().trim();
+            String dest   = toField.getText().trim();
 
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+            String date = fmt.format((Date) dateSpinner.getValue());
+
+            flights_dao dao = new flights_dao();
+            List<Flight> results = dao.searchFlights(origin, dest, date);
+
+            dispose();
+            new FlightsListPage(results).setVisible(true);
         });
 
         logoutBtn.addActionListener(e -> {

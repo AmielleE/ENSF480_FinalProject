@@ -13,11 +13,10 @@ import model.Flight;
 import model.Plane;
 import model.SeatMap;
 
-
 // A simple GUI to test bookings and seat map
 public class FlightsListPage extends JFrame {
 
-    public FlightsListPage() {
+    public FlightsListPage(List<Flight> flights) {
         setTitle("Flight Lists Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -78,60 +77,37 @@ public class FlightsListPage extends JFrame {
         int panelHeight = screenHeight / 4;
 
         // ---- FLIGHT CARD PANES ----
-        for (int i = 0; i < 4; i++) {
-
+        for (Flight f : flights) {
             JPanel whitePane = new JPanel();
             whitePane.setPreferredSize(new Dimension(300, panelHeight));
             whitePane.setBackground(Color.WHITE);
             whitePane.setLayout(new BorderLayout());
             whitePane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // LEFT SIDE INFO
             JPanel leftInfo = new JPanel();
             leftInfo.setLayout(new BoxLayout(leftInfo, BoxLayout.Y_AXIS));
             leftInfo.setBackground(Color.WHITE);
 
-            JLabel airlineLabel = new JLabel("Airline " + (i + 1));
-            airlineLabel.setFont(new Font("Arial", Font.BOLD, 20));
-            airlineLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            JLabel cityLabel = new JLabel("Calgary to Vancouver");
-            cityLabel.setFont(new Font("Arial", Font.ITALIC, 20));
-            cityLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            JLabel fromLabel = new JLabel("Departure: January 1, 2025, 0" + i + ":00");
-            JLabel toLabel   = new JLabel("Arrival: January 1, 2025, 0" + (i + 1) + ":30");
-
-            fromLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            toLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            JLabel flightNumberLabel = new JLabel("Flight Number: 123ABC");
-            flightNumberLabel.setFont(new Font("Arial", Font.BOLD, 16));
-            flightNumberLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            JLabel airlineLabel  = new JLabel(f.getPlane().getAirline());
+            JLabel cityLabel     = new JLabel(f.getOrigin() + " → " + f.getDestination());
+            JLabel fromLabel     = new JLabel("Departure: " + f.getDate() + " " + f.getDepartureTime());
+            JLabel toLabel       = new JLabel("Arrival: " + f.getArrivalTime());
+            JLabel flightNumber  = new JLabel("Flight Number: " + f.getFlightID());
 
             leftInfo.add(airlineLabel);
-            leftInfo.add(Box.createVerticalStrut(5));
             leftInfo.add(cityLabel);
-            leftInfo.add(Box.createVerticalStrut(5));
             leftInfo.add(fromLabel);
-            leftInfo.add(Box.createVerticalStrut(5));
             leftInfo.add(toLabel);
-            leftInfo.add(Box.createVerticalGlue());
-            leftInfo.add(flightNumberLabel);
+            leftInfo.add(flightNumber);
 
-            // RIGHT SIDE (price + button)
             JPanel rightInfo = new JPanel();
             rightInfo.setLayout(new BoxLayout(rightInfo, BoxLayout.Y_AXIS));
             rightInfo.setBackground(Color.WHITE);
 
-            JLabel priceLabel = new JLabel("$" + (200 + i * 25));
-            priceLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            priceLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
+            JLabel price = new JLabel("$" + f.getPrice());
             JButton bookButton = new JButton("Book Now");
-            bookButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
-            rightInfo.add(priceLabel);
+            rightInfo.add(price);
             rightInfo.add(Box.createVerticalGlue());
             rightInfo.add(bookButton);
 
@@ -141,6 +117,7 @@ public class FlightsListPage extends JFrame {
             innerPanel.add(Box.createVerticalStrut(10));
             innerPanel.add(whitePane);
         }
+
 
         JPanel leftOuter = new JPanel(new BorderLayout());
         leftOuter.setBackground(bg);

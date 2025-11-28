@@ -4,8 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Flight;
-import model.Plane;
+import model.*;
+import dao.*;
 
 public class flights_dao {
     private planes_dao planesDao = new planes_dao();
@@ -35,6 +35,58 @@ public class flights_dao {
             return false;
         }
     }
+
+    public List<Flight> searchFlights(String origin, String destination, String date) {
+        List<Flight> flights = new ArrayList<>();
+
+        String sql = "SELECT * FROM flights WHERE origin = ? AND destination = ? AND flightDate = ?";
+
+        try (Connection conn = database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, origin);
+            ps.setString(2, destination);
+            ps.setString(3, date);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String flightID   = rs.getString("flightID");
+                String flightDate = rs.getString("flightDate");
+                String flightTime = rs.getString("flightTime");
+                double price      = rs.getDouble("price");
+                String planeID    = rs.getString("planeID");
+                int seatsAvail    = rs.getInt("seatsAvailable");
+
+                // Fetch Plane object
+                planes_dao pdao = new planes_dao();
+                Plane plane = pdao.getPlaneByID(planeID);
+
+                // Build Flight object
+                Flight f = new Flight(
+                    flightID,
+                    origin,
+                    destination,
+                    flightDate,
+                    flightTime,  // stored as departure
+                    "",          // arrival time (you can fill later)
+                    price,
+                    plane
+                );
+
+                f.setSeatsAvailable(seatsAvail);
+
+                flights.add(f);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("searchFlights error: " + e.getMessage());
+        }
+
+        return flights;
+    }
+
+
 
     public Flight getFlightById(String flightID) {
         String sql = "SELECT flightID, origin, destination, flightDate, flightTime, price, planeID " +
@@ -69,36 +121,36 @@ public class flights_dao {
     }
 
     public List<Flight> getAllFlights() {
-        List<Flight> flights = new ArrayList<>();
+        List<Flight> list = new ArrayList<>();
 
-        String sql = "SELECT flightID, origin, destination, flightDate, flightTime, price, planeID FROM flights";
+        String sql = "SELECT * FROM flights";
 
         try (Connection conn = database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-
-                String id     = rs.getString("flightID");
+                String flightID = rs.getString("flightID");
                 String origin = rs.getString("origin");
-                String dest   = rs.getString("destination");
-                String date   = rs.getString("flightDate");
-                String time   = rs.getString("flightTime");
-                double price  = rs.getDouble("price");
+                String dest = rs.getString("destination");
+                String date = rs.getString("flightDate");
+                String time = rs.getString("flightTime");
+                double price = rs.getDouble("price");
                 String planeID = rs.getString("planeID");
+                int seats = rs.getInt("seatsAvailable");
 
-                Plane plane = planesDao.getPlaneByID(planeID);
+                Plane plane = new planes_dao().getPlaneByID(planeID);
+                Flight f = new Flight(flightID, origin, dest, date, time, "", price, plane);
+                f.setSeatsAvailable(seats);
 
-                Flight f = new Flight(id, origin, dest, date, time, "", price, plane);
-                flights.add(f);
+                list.add(f);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("getAllFlights error: " + e.getMessage());
         }
-
-        return flights;
+        return list;
     }
+
 
     public boolean updateFlight(Flight flight) {
         String sql = "UPDATE flights SET " +
@@ -135,13 +187,37 @@ public class flights_dao {
         String sql = "DELETE FROM flights WHERE flightID = ?";
 
         try (Connection conn = database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, flightID);
-            return stmt.executeUpdate() > 0;
+            ps.setString(1, flightID);
+            return ps.executeUpdate() > 0;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("DeleteFlight error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean insertFlight(Flight f) {
+        String sql = "INSERT INTO flights VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, f.getFlightID());
+            ps.setString(2, f.getOrigin());
+            ps.setString(3, f.getDestination());
+            ps.setString(4, f.getDate());
+            ps.setString(5, f.getDepartureTime()); 
+            ps.setDouble(6, f.getPrice());
+            ps.setString(7, f.getPlane().getAircraftID());
+            ps.setInt(8, f.getPlane().getCapacity()); // initial seats available
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("InsertFlight error: " + e.getMessage());
             return false;
         }
     }

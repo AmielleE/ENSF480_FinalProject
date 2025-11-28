@@ -13,6 +13,7 @@ public class Flight {
     private double price;
     private Plane plane;
     private SeatMap seatMap;
+    private int seatsAvailable;
 
     private List<Customer> passengers;
     private List<Booking> reservations;
@@ -42,7 +43,7 @@ public class Flight {
     public double getPrice() { return price; }
     public Plane getPlane() { return plane; }
     public SeatMap getSeatMap() { return seatMap; }
-
+    public int getSeatsAvailable() {return seatsAvailable;}
     public List<Customer> getPassengers() { return passengers; }
     public List<Booking> getReservations() { return reservations; }
 
@@ -56,6 +57,9 @@ public class Flight {
     public void setPlane(Plane plane) { 
         this.plane = plane; 
         this.seatMap = new SeatMap(plane); // reset seat map for new plane
+    }
+    public void setSeatsAvailable(int seatsAvailable) {
+        this.seatsAvailable = seatsAvailable;
     }
 
     // Add passenger/reservation

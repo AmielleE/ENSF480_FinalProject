@@ -3,9 +3,14 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+import java.util.ArrayList;
+
+import dao.planes_dao;
 import dao.users_dao;
-import model.Customer;
-import model.User;
+import model.*;
+import gui.*;
+import controller.*;
 
 public class LoginPage extends JFrame {
 
@@ -115,10 +120,14 @@ public class LoginPage extends JFrame {
                     new HomePage();
                     break;
                 case "Agent":
-                    new CustomerManagementGUI();
+                    new CustomerManagementGUI().setVisible(true);
                     break;
                 case "Admin":
-                    new FlightManagementGUI();
+                    ManageFlightController flightController = new ManageFlightController();
+                    planes_dao planesDao = new planes_dao();
+                    List<Plane> allPlanes = planesDao.getAllPlanes();
+
+                    new FlightManagementGUI(flightController, allPlanes).setVisible(true);
                     break;
             }
             dispose();

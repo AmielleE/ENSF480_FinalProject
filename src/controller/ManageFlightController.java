@@ -3,16 +3,24 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.flights_dao;
 import model.Flight;
 import model.Plane;
+import dao.*;
 
 public class ManageFlightController {
 
     private List<Flight> flights = new ArrayList<>();
 
+    public boolean addFlight(Flight flight) {
+        flights_dao dao = new flights_dao();
+        return dao.insertFlight(flight);   // or dao.addFlight(flight) if your DAO uses that name
+    }
+    
     // Get ALL flights (returns a copy so the list cannot be externally modified)
     public List<Flight> getAllFlights() {
-        return new ArrayList<>(flights);
+        flights_dao dao = new flights_dao();
+        return dao.getAllFlights();
     }
 
     // View flights matching search criteria
@@ -33,46 +41,20 @@ public class ManageFlightController {
     }
 
     // Add a new flight — ensures no duplicates
-    public boolean addFlight(Flight flight) {
-        for (Flight f : flights) {
-            if (f.getFlightID().equals(flight.getFlightID())) {
-                return false; // Already exists
-            }
-        }
-        flights.add(flight);
-        return true;
-    }
-
-    // Remove flight by ID
     public boolean removeFlight(String flightID) {
-        return flights.removeIf(f -> f.getFlightID().equals(flightID));
+        flights_dao dao = new flights_dao();
+        return dao.deleteFlight(flightID);
     }
 
     // Update Flight — only updates fields that are != null
-    public boolean updateFlight(
-            String flightID,
-            String newOrigin,
-            String newDestination,
-            String newDate,
-            String newDepartureTime,
-            String newArrivalTime,
-            Double newPrice,
-            Plane newPlane
-    ) {
-        for (Flight f : flights) {
-            if (f.getFlightID().equals(flightID)) {
+    public boolean updateFlight(String flightID, String origin, String dest,
+                            String date, String dep, String arr,
+                            Double price, Plane plane) {
 
-                if (newOrigin != null && !newOrigin.isEmpty()) f.setOrigin(newOrigin);
-                if (newDestination != null && !newDestination.isEmpty()) f.setDestination(newDestination);
-                if (newDate != null && !newDate.isEmpty()) f.setDate(newDate);
-                if (newDepartureTime != null && !newDepartureTime.isEmpty()) f.setDepartureTime(newDepartureTime);
-                if (newArrivalTime != null && !newArrivalTime.isEmpty()) f.setArrivalTime(newArrivalTime);
-                if (newPrice != null) f.setPrice(newPrice);
-                if (newPlane != null) f.setPlane(newPlane);
+    // Build updated Flight object
+    Flight updated = new Flight(flightID, origin, dest, date, dep, arr, price, plane);
 
-                return true;
-            }
-        }
-        return false; // flight not found
+    flights_dao dao = new flights_dao();
+        return dao.updateFlight(updated);
     }
 }
