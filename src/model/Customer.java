@@ -6,6 +6,8 @@ import controller.BookingController;
 import controller.ManageFlightController;
 import controller.PaymentController;
 
+import model.*;
+
 public class Customer extends User {
 
     private PaymentInfo paymentInfo;
@@ -22,6 +24,11 @@ public class Customer extends User {
         this.role = "Customer";
     }
 
+    public Customer(int id, String fn, String ln, String email, String pw) {
+        super(id, fn, ln, email, pw);   // <-- use the id passed in
+        this.role = "Customer";
+    }
+    
     public Customer(String fn, String ln, String email, String pw) {
         super(0, fn, ln, email, pw);
         this.role = "Customer";

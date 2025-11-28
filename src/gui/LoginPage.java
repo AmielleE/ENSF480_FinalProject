@@ -115,10 +115,10 @@ public class LoginPage extends JFrame {
                     new HomePage();
                     break;
                 case "Agent":
-                    new AgentPage();
+                    new CustomerManagementGUI();
                     break;
                 case "Admin":
-                    new AdminPage();
+                    new FlightManagementGUI();
                     break;
             }
             dispose();
