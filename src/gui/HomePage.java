@@ -2,6 +2,9 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class HomePage extends JFrame {
 
@@ -130,6 +133,11 @@ public class HomePage extends JFrame {
         bottomPanel.setOpaque(false);
         JButton logoutBtn = new JButton("Logout");
         bottomPanel.add(logoutBtn, BorderLayout.EAST);
+
+        searchBtn.addActionListener(e -> {
+            dispose();
+
+        });
 
         logoutBtn.addActionListener(e -> {
             dispose();
