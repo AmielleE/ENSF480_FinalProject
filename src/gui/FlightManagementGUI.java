@@ -232,11 +232,11 @@ public class FlightManagementGUI extends JFrame {
         arrivalField.setText((String) tableModel.getValueAt(row, 5));
         priceField.setText(String.valueOf(tableModel.getValueAt(row, 6)));
 
-        String planeDesc = (String) tableModel.getValueAt(row, 7); // we stored description
+        String aircraftID = (String) tableModel.getValueAt(row, 7);
+
         for (int i = 0; i < planeCombo.getItemCount(); i++) {
             Plane p = planeCombo.getItemAt(i);
-            String desc = p.getModel() + " (" + p.getAircraftID() + ") " + p.getRows() + "x" + p.getCols();
-            if (desc.equals(planeDesc)) {
+            if (p.getAircraftID().equals(aircraftID)) {
                 planeCombo.setSelectedIndex(i);
                 break;
             }
@@ -247,7 +247,7 @@ public class FlightManagementGUI extends JFrame {
         tableModel.setRowCount(0);
         for (Flight f : flightController.getAllFlights()) {
             Plane p = f.getPlane();
-            String planeDesc = p.getModel() + " (" + p.getAircraftID() + ") " + p.getRows() + "x" + p.getCols();
+            String planeDesc = p.getAircraftID(); // only store aircraftID
             tableModel.addRow(new Object[]{
                     f.getFlightID(),
                     f.getOrigin(),

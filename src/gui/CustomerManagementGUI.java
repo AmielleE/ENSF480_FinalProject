@@ -9,7 +9,7 @@ import model.*;
 
 public class CustomerManagementGUI extends JFrame {
 
-    private CustomerManager manager = new CustomerManager();
+    private CustomerManager manager = CustomerManager.getInstance();
 
     private JTextField idField, fnField, lnField, emailField, pwField;
     private JTextArea output;

@@ -2,11 +2,18 @@ package model;
 
 import java.util.ArrayList;
 
-import model.*;
-
 public class CustomerManager {
 
+    private static CustomerManager instance; //the single instance
     private ArrayList<Customer> customers = new ArrayList<>();
+    private CustomerManager() { }
+
+    public static CustomerManager getInstance() { //singleton pattern
+        if (instance == null) {
+            instance = new CustomerManager();
+        }
+        return instance;
+    }
 
     public void addCustomer(Customer c) {
         customers.add(c);
