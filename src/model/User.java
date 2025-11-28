@@ -1,6 +1,6 @@
 package model;
 
-public abstract class User {
+public abstract class User { //Parent class for Customer, Flight Agent, and SystemAdmin
     protected int userID;
     protected String firstName;
     protected String lastName;
@@ -16,22 +16,22 @@ public abstract class User {
         this.password = password;
     }
 
+    //Getters
     public int getId() { return userID; }
-    public void setId(int id) { this.userID = id; }
-
     public String getFirstName() { return firstName; }
-    public void setFirstName(String fn) { this.firstName = fn; }
-
     public String getLastName() { return lastName; }
-    public void setLastName(String ln) { this.lastName = ln; }
-
     public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
     public String getPassword() { return password; }
+    public String getRole() {return role;}
+
+
+    //Setters
+    public void setId(int id) { this.userID = id; }
+    public void setFirstName(String fn) { this.firstName = fn; }
+    public void setLastName(String ln) { this.lastName = ln; }
+    public void setEmail(String email) { this.email = email; }
     public void setPassword(String pw) { this.password = pw; }
 
-    public String getRole() {return role;}
     public void setRole(String role) {this.role = role;}
    
     @Override

@@ -22,7 +22,7 @@ public class Booking {
         flight.addReservation(this);
     }
 
-    // Getters
+    //Getters
     public int getConfirmationNumber() { return confirmationNumber; }
     public Customer getCustomer() { return customer; }
     public Flight getFlight() { return flight; }
@@ -35,9 +35,7 @@ public class Booking {
         System.out.println("Booking " + confirmationNumber + " canceled.");
     }
 
-    // Modify booking
     public boolean modifyBooking(Flight newFlight, List<String> newSeats) {
-        // Free old seats
         for (String seat : seatNumbers) {
             flight.getSeatMap().cancelSeat(seat);
         }

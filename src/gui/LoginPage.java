@@ -7,6 +7,8 @@ import dao.users_dao;
 import model.Customer;
 import model.User;
 
+//This page is shown at the very beginning of the application to login
+
 public class LoginPage extends JFrame {
 
     private JTextField usernameField;
@@ -17,45 +19,37 @@ public class LoginPage extends JFrame {
     private users_dao userDao = new users_dao();
 
     public LoginPage() {
-        setTitle("Login Page");
+        setTitle("Flight Booking System");
         setSize(500, 350);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Background color of ENTIRE page
-        getContentPane().setBackground(new Color(90, 200, 200));  // modern blue
+        getContentPane().setBackground(new Color(90, 200, 200));
         setLayout(new BorderLayout());
 
-        // ==========================
-        // TOP TITLE PANEL
-        // ==========================
         JLabel title = new JLabel("Flight Booking System", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 26));
-        title.setForeground(Color.WHITE); // make text readable on blue
+        title.setForeground(Color.WHITE);
 
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.add(title, BorderLayout.CENTER);
 
-        // Push title downward
         titlePanel.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
 
-        // Transparent panel so blue background shows
         titlePanel.setOpaque(false);
 
         add(titlePanel, BorderLayout.NORTH);
 
-        // ==========================
-        // CENTER LOGIN FORM PANEL
-        // ==========================
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setOpaque(false);   // transparent
+        
+        mainPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // USERNAME ROW
+        //for username
         gbc.gridx = 0;
         gbc.gridy = 0;
         JLabel userLabel = new JLabel("Username:");
@@ -67,7 +61,7 @@ public class LoginPage extends JFrame {
         usernameField.setPreferredSize(new Dimension(150, 25));
         mainPanel.add(usernameField, gbc);
 
-        // PASSWORD ROW
+        //for password
         gbc.gridx = 0;
         gbc.gridy = 1;
         JLabel passLabel = new JLabel("Password:");
@@ -79,7 +73,7 @@ public class LoginPage extends JFrame {
         passwordField.setPreferredSize(new Dimension(150, 25));
         mainPanel.add(passwordField, gbc);
 
-        // LOGIN BUTTON (CENTERED)
+        //for login button
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -87,16 +81,13 @@ public class LoginPage extends JFrame {
         loginBtn = new JButton("Login");
         mainPanel.add(loginBtn, gbc);
 
-        // REGISTER BUTTON ()
+        //register button
         gbc.gridy = 3;
         registerBtn = new JButton("Register");
         mainPanel.add(registerBtn, gbc);
 
         add(mainPanel, BorderLayout.CENTER);
 
-        // ==========================
-        // LOGIN LOGIC
-        // ==========================
         loginBtn.addActionListener(e -> {
             String email = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -124,9 +115,6 @@ public class LoginPage extends JFrame {
             dispose();
         });
 
-        // ==========================
-        // REGISTER LOGIC
-        // ==========================
         registerBtn.addActionListener(e -> {
             new RegisterPage().setVisible(true);
             dispose();

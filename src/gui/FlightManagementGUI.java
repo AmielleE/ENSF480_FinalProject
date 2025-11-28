@@ -11,22 +11,22 @@ import java.util.ArrayList;
 import controller.*;
 import model.*;
 
+//This is the page that the system admin will see when login in. They can then add, remove, modify flights.
+
 public class FlightManagementGUI extends JFrame {
 
     private ManageFlightController flightController;
 
-    // UI components
     private JTable flightTable;
     private DefaultTableModel tableModel;
 
     private JTextField idField, originField, destinationField, dateField, departureField, arrivalField, priceField;
     private JComboBox<Plane> planeCombo;
 
-    // sample planes list (for dropdown)
     private List<Plane> availablePlanes = new ArrayList<>();
 
     public FlightManagementGUI(ManageFlightController controller, List<Plane> planes) {
-        super("Flight Management");
+        super("Flight Booking System");
         this.flightController = controller;
         this.availablePlanes = planes;
 
@@ -40,7 +40,6 @@ public class FlightManagementGUI extends JFrame {
     private void initComponents() {
         setLayout(new BorderLayout(8, 8));
 
-        // Top: Form
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(6,6,6,6);
@@ -57,8 +56,7 @@ public class FlightManagementGUI extends JFrame {
         planeCombo = new JComboBox<>(availablePlanes.toArray(new Plane[0]));
         planeCombo.setRenderer(new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof Plane) {
                     Plane p = (Plane) value;
@@ -98,10 +96,8 @@ public class FlightManagementGUI extends JFrame {
 
         add(form, BorderLayout.WEST);
 
-        // Center: buttons and table
         JPanel center = new JPanel(new BorderLayout(6,6));
 
-        // Buttons
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
         JButton addBtn = new JButton("Add Flight");
         JButton updateBtn = new JButton("Update Flight");
@@ -113,15 +109,13 @@ public class FlightManagementGUI extends JFrame {
 
         center.add(buttons, BorderLayout.NORTH);
 
-        // Table
-        tableModel = new DefaultTableModel(new String[]{
-                "Flight ID", "Origin", "Destination", "Date", "Departure", "Arrival", "Price", "Plane"
-        }, 0) {
+        tableModel = new DefaultTableModel(new String[]{"Flight ID", "Origin", "Destination", "Date", "Departure", "Arrival", "Price", "Plane"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+
         flightTable = new JTable(tableModel);
         flightTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroll = new JScrollPane(flightTable);
@@ -129,12 +123,11 @@ public class FlightManagementGUI extends JFrame {
 
         add(center, BorderLayout.CENTER);
 
-        // Button actions
+        //Button actions linking to the methods, and the database
         addBtn.addActionListener(e -> addFlightAction());
         removeBtn.addActionListener(e -> removeFlightAction());
         updateBtn.addActionListener(e -> updateFlightAction());
 
-        // When selecting a row, populate fields
         flightTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -239,7 +232,6 @@ public class FlightManagementGUI extends JFrame {
         arrivalField.setText((String) tableModel.getValueAt(row, 5));
         priceField.setText(String.valueOf(tableModel.getValueAt(row, 6)));
 
-        // Try to select the plane in combo matching aircraftID
         String planeDesc = (String) tableModel.getValueAt(row, 7); // we stored description
         for (int i = 0; i < planeCombo.getItemCount(); i++) {
             Plane p = planeCombo.getItemAt(i);
@@ -281,16 +273,15 @@ public class FlightManagementGUI extends JFrame {
         flightTable.clearSelection();
     }
 
-    // ---------- Main for testing ----------
     public static void main(String[] args) {
-        // sample planes
+        //sample planes to have some available when we start
         Plane p1 = new Plane("A320-01", "Airbus A320", "TestAir", 30, 6);
         Plane p2 = new Plane("CRJ-200", "Bombardier CRJ200", "RegionalAir", 15, 4);
         Plane p3 = new Plane("G650", "Gulfstream G650", "PrivateJets", 10, 4);
         List<Plane> planes = new ArrayList<>();
         planes.add(p1); planes.add(p2); planes.add(p3);
 
-        // sample controller + flights
+        //sample flights
         ManageFlightController controller = new ManageFlightController();
         controller.addFlight(new Flight("F100", "Calgary", "Toronto", "2025-12-01", "08:00", "12:00", 320.0, p1));
         controller.addFlight(new Flight("F200", "Edmonton", "Vancouver", "2025-12-02", "09:30", "11:00", 180.0, p2));

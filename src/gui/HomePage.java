@@ -5,6 +5,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+//This page is the first page the customer sees when a customer logs in. It serves as a starting point for booking flights, and also to see your reservations.
 
 public class HomePage extends JFrame {
 
@@ -16,38 +17,24 @@ public class HomePage extends JFrame {
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 100;
         setSize(screenWidth, screenHeight);
 
-        // ================================
-        // BACKGROUND COLOR
-        // ================================
-        getContentPane().setBackground(new Color(90, 200, 200)); // LIGHT BLUE
+        getContentPane().setBackground(new Color(90, 200, 200)); 
         setLayout(new BorderLayout());
 
-        // ================================
-        // OUTER CENTER PANEL
-        // ================================
         JPanel outer = new JPanel(new GridBagLayout());
-        outer.setOpaque(false); // transparent to show background
+        outer.setOpaque(false); 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // ================================
-        // COLUMN PANEL (VERTICAL)
-        // ================================
         JPanel column = new JPanel();
         column.setOpaque(false);
         column.setLayout(new BoxLayout(column, BoxLayout.Y_AXIS));
 
-        // ================================
-        // INNER ROW (HORIZONTAL INPUT BAR)
-        // ================================
         JPanel row = new JPanel();
         row.setOpaque(false);
         row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
 
-        // COMMON STYLE
         Color fieldBg = new Color(255, 255, 255);
         Color textBlack = Color.BLACK;
 
-        // FROM PANEL
         JPanel fromPanel = new JPanel();
         fromPanel.setOpaque(false);
         fromPanel.setLayout(new BoxLayout(fromPanel, BoxLayout.Y_AXIS));
@@ -61,7 +48,6 @@ public class HomePage extends JFrame {
         fromPanel.add(fromLabel);
         fromPanel.add(fromField);
 
-        // TO PANEL
         JPanel toPanel = new JPanel();
         toPanel.setOpaque(false);
         toPanel.setLayout(new BoxLayout(toPanel, BoxLayout.Y_AXIS));
@@ -75,7 +61,6 @@ public class HomePage extends JFrame {
         toPanel.add(toLabel);
         toPanel.add(toField);
 
-        // DATE PANEL
         JPanel datePanel = new JPanel();
         datePanel.setOpaque(false);
         datePanel.setLayout(new BoxLayout(datePanel, BoxLayout.Y_AXIS));
@@ -95,13 +80,11 @@ public class HomePage extends JFrame {
         datePanel.add(dateLabel);
         datePanel.add(dateSpinner);
 
-        // SEARCH BUTTON PANEL
         JPanel searchPanel = new JPanel();
         searchPanel.setOpaque(false);
         JButton searchBtn = new JButton("Search");
         searchPanel.add(searchBtn);
 
-        // Add all to row
         row.add(fromPanel);
         row.add(Box.createHorizontalStrut(30));
         row.add(toPanel);
@@ -110,7 +93,6 @@ public class HomePage extends JFrame {
         row.add(Box.createHorizontalStrut(30));
         row.add(searchPanel);
 
-        // RESERVATIONS BUTTON PANEL
         JPanel resPanel = new JPanel();
         resPanel.setOpaque(false);
         JButton reservationsBtn = new JButton("See List of Reservations");
@@ -128,7 +110,6 @@ public class HomePage extends JFrame {
             new ReservationsPage().setVisible(true);
         });
 
-        // BOTTOM LOGOUT BUTTON
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setOpaque(false);
         JButton logoutBtn = new JButton("Logout");

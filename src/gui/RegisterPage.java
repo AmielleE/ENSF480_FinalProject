@@ -5,6 +5,8 @@ import java.awt.*;
 import dao.users_dao;
 import model.Customer;
 
+//This page is used for creating new customer users
+
 public class RegisterPage extends JFrame {
     private JTextField firstNameField;
     private JTextField lastNameField;
@@ -16,7 +18,7 @@ public class RegisterPage extends JFrame {
     private users_dao usersDao = new users_dao();
 
     public RegisterPage(){
-        setTitle("Register");
+        setTitle("Flight Booking System");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -104,8 +106,6 @@ public class RegisterPage extends JFrame {
         formPanel.add(buttonPanel, gbc);
 
         add(formPanel, BorderLayout.CENTER);
-
-        //BUTTON LOGIC
 
         //Register Button Logic
         registerBtn.addActionListener(e -> {

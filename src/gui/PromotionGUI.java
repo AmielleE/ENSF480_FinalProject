@@ -5,15 +5,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+//This is the page used to show the promotion
+
 public class PromotionGUI extends JFrame {
 
     public PromotionGUI() {
-        setTitle("Monthly Promotions");
+        setTitle("Flight Booking System");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Main panel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
@@ -23,7 +24,6 @@ public class PromotionGUI extends JFrame {
         JButton showPromoButton = new JButton("Show Monthly Promotion");
         showPromoButton.setFont(new Font("Arial", Font.PLAIN, 16));
 
-        // Button listener
         showPromoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -7,8 +7,9 @@ import model.Booking;
 import model.Customer;
 import model.Flight;
 
-public class BookingController {
+//Controller class for bookings containing the methods required (make, cancel, view, modify booking)
 
+public class BookingController {
     private HashMap<Integer, Booking> bookings = new HashMap<>();
     private int nextConfirmation = 1000;
 

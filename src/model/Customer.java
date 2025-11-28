@@ -8,7 +8,7 @@ import controller.PaymentController;
 
 import model.*;
 
-public class Customer extends User {
+public class Customer extends User { //Customer is a kind of User
 
     private PaymentInfo paymentInfo;
 
@@ -25,7 +25,7 @@ public class Customer extends User {
     }
 
     public Customer(int id, String fn, String ln, String email, String pw) {
-        super(id, fn, ln, email, pw);   // <-- use the id passed in
+        super(id, fn, ln, email, pw);
         this.role = "Customer";
     }
     

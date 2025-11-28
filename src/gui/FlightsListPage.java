@@ -14,11 +14,11 @@ import model.Plane;
 import model.SeatMap;
 
 
-// A simple GUI to test bookings and seat map
+//The page that the customers will see when booking a flight
 public class FlightsListPage extends JFrame {
 
     public FlightsListPage() {
-        setTitle("Flight Lists Page");
+        setTitle("Flight Booking System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -29,17 +29,14 @@ public class FlightsListPage extends JFrame {
         getContentPane().setBackground(bg);
         setLayout(new BorderLayout());
 
-        // ===== TOP BAR WITH SEPARATED BUTTONS =====
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(bg);
 
-        // Left side: Promotion
         JButton promotionButton = new JButton("Promotion!");
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setBackground(bg);
         leftPanel.add(promotionButton);
 
-        // Right side: Back to Home
         JButton backButton = new JButton("Back to Home");
         backButton.addActionListener(e -> {
             dispose();
@@ -55,13 +52,9 @@ public class FlightsListPage extends JFrame {
 
         add(topBar, BorderLayout.SOUTH);
 
-        // ---- MAIN PANEL ----
         JPanel mainPanel = new JPanel(new GridLayout(1, 1));
         add(mainPanel, BorderLayout.CENTER);
 
-        // =========================
-        // LEFT COLUMN (SCROLLABLE)
-        // =========================
         JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setBackground(bg);
@@ -77,7 +70,6 @@ public class FlightsListPage extends JFrame {
 
         int panelHeight = screenHeight / 4;
 
-        // ---- FLIGHT CARD PANES ----
         for (int i = 0; i < 4; i++) {
 
             JPanel whitePane = new JPanel();
@@ -86,7 +78,6 @@ public class FlightsListPage extends JFrame {
             whitePane.setLayout(new BorderLayout());
             whitePane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // LEFT SIDE INFO
             JPanel leftInfo = new JPanel();
             leftInfo.setLayout(new BoxLayout(leftInfo, BoxLayout.Y_AXIS));
             leftInfo.setBackground(Color.WHITE);
@@ -119,7 +110,6 @@ public class FlightsListPage extends JFrame {
             leftInfo.add(Box.createVerticalGlue());
             leftInfo.add(flightNumberLabel);
 
-            // RIGHT SIDE (price + button)
             JPanel rightInfo = new JPanel();
             rightInfo.setLayout(new BoxLayout(rightInfo, BoxLayout.Y_AXIS));
             rightInfo.setBackground(Color.WHITE);

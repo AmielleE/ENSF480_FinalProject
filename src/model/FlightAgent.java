@@ -1,19 +1,25 @@
 package model;
 
 import java.util.List;
-
 import controller.BookingController;
 import controller.ManageFlightController;
 
-public class FlightAgent extends User {
+public class FlightAgent extends User { //Flight Agent is a kind of User
 
     private BookingController bookingController;
     private ManageFlightController flightController;
+    private CustomerManager customerManager;
 
-    public FlightAgent(int id, String fn, String ln, String email, String pw, BookingController bc, ManageFlightController fc) {
+    public FlightAgent(
+            int id, String fn, String ln, String email, String pw,
+            BookingController bc,
+            ManageFlightController fc,
+            CustomerManager cm
+    ) {
         super(id, fn, ln, email, pw);
         this.bookingController = bc;
         this.flightController = fc;
+        this.customerManager = cm;
         this.role = "Agent";
     }
 
@@ -33,8 +39,24 @@ public class FlightAgent extends User {
         bookingController.cancelBooking(bookingID);
     }
 
-    public void viewCustomerDetails(Customer c) {
-        System.out.println("Customer: " + c.firstName + " " + c.lastName);
-        System.out.println("Email: " + c.email);
+    public void addCustomer(Customer c) {
+        customerManager.addCustomer(c);
     }
+
+    public boolean removeCustomer(int id) {
+        return customerManager.removeCustomer(id);
+    }
+
+    public Customer findCustomer(int id) {
+        return customerManager.findCustomer(id);
+    }
+
+    public boolean updateCustomer(int id, String fn, String ln, String email, String pw) {
+        return customerManager.updateCustomer(id, fn, ln, email, pw);
+    }
+
+    public List<Customer> getAllCustomers() {
+        return customerManager.getAllCustomers();
+    }
+
 }

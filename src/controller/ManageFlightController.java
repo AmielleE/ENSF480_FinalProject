@@ -6,17 +6,17 @@ import java.util.List;
 import model.Flight;
 import model.Plane;
 
+//Manage Flight controller with a list of flights and the required operations (view, add, remove, update flight)
+
 public class ManageFlightController {
 
     private List<Flight> flights = new ArrayList<>();
 
-    // Get ALL flights (returns a copy so the list cannot be externally modified)
     public List<Flight> getAllFlights() {
         return new ArrayList<>(flights);
     }
 
-    // View flights matching search criteria
-    public List<Flight> viewFlights(String origin, String destination, String date) {
+    public List<Flight> viewFlights(String origin, String destination, String date) { //using search criteria
         List<Flight> result = new ArrayList<>();
 
         for (Flight f : flights) {
@@ -32,33 +32,22 @@ public class ManageFlightController {
         return result;
     }
 
-    // Add a new flight — ensures no duplicates
-    public boolean addFlight(Flight flight) {
+    public boolean addFlight(Flight flight) { //creating unique flights
         for (Flight f : flights) {
             if (f.getFlightID().equals(flight.getFlightID())) {
-                return false; // Already exists
+                return false; 
             }
         }
         flights.add(flight);
         return true;
     }
 
-    // Remove flight by ID
     public boolean removeFlight(String flightID) {
         return flights.removeIf(f -> f.getFlightID().equals(flightID));
     }
 
-    // Update Flight — only updates fields that are != null
-    public boolean updateFlight(
-            String flightID,
-            String newOrigin,
-            String newDestination,
-            String newDate,
-            String newDepartureTime,
-            String newArrivalTime,
-            Double newPrice,
-            Plane newPlane
-    ) {
+    public boolean updateFlight(String flightID, String newOrigin, String newDestination, String newDate, String newDepartureTime, String newArrivalTime, Double newPrice, Plane newPlane) 
+    { //only updates the fields that are entered (not null) 
         for (Flight f : flights) {
             if (f.getFlightID().equals(flightID)) {
 
@@ -73,6 +62,6 @@ public class ManageFlightController {
                 return true;
             }
         }
-        return false; // flight not found
+        return false;
     }
 }

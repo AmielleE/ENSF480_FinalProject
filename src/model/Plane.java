@@ -23,7 +23,6 @@ public class Plane {
     public String getAirline() { return airline; }
     public int getRows() { return rows; }
     public int getCols() { return cols; }
-
     public SeatMap getSeatMap() { return seatMap; }
 
     public boolean bookSeat(String seatLabel) {

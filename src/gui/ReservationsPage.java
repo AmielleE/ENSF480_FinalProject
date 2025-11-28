@@ -1,5 +1,9 @@
+package gui;
+
 import javax.swing.*;
 import java.awt.*;
+
+//This page contains the operations to make a booking (reservation) for a customer
 
 public class ReservationsPage extends JFrame {
 
@@ -10,8 +14,7 @@ public class ReservationsPage extends JFrame {
     private static final Font VALUE_FONT = new Font("Arial", Font.PLAIN, 14);
 
     public ReservationsPage() {
-        // Title of the window
-        setTitle("Flight Booking System - Reservations");
+        setTitle("Flight Booking System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -22,9 +25,6 @@ public class ReservationsPage extends JFrame {
         getContentPane().setBackground(BG_COLOR);
         setLayout(new BorderLayout(10, 10));
 
-        // ================================
-        // TOP HEADER
-        // ================================
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(BG_COLOR);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
@@ -47,9 +47,6 @@ public class ReservationsPage extends JFrame {
         headerPanel.add(headerTextPanel, BorderLayout.WEST);
         add(headerPanel, BorderLayout.NORTH);
 
-        // ================================
-        // LEFT COLUMN (SCROLLABLE LIST)
-        // ================================
         JPanel leftColumn = new JPanel();
         leftColumn.setLayout(new BoxLayout(leftColumn, BoxLayout.Y_AXIS));
         leftColumn.setBackground(BG_COLOR);
@@ -78,17 +75,11 @@ public class ReservationsPage extends JFrame {
 
         add(leftScroll, BorderLayout.WEST);
 
-        // ====================================
-        // RIGHT SIDE (DETAILS + ACTIONS)
-        // ====================================
         JPanel rightSide = new JPanel(new GridLayout(1, 2, 10, 0));
         rightSide.setBackground(BG_COLOR);
         rightSide.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(rightSide, BorderLayout.CENTER);
 
-        // ================================
-        // MIDDLE COLUMN (DETAILS)
-        // ================================
         JPanel middleCard = new JPanel();
         middleCard.setLayout(new BoxLayout(middleCard, BoxLayout.Y_AXIS));
         middleCard.setBackground(Color.WHITE);
@@ -121,9 +112,6 @@ public class ReservationsPage extends JFrame {
 
         rightSide.add(middleCard);
 
-        // ================================
-        // RIGHT COLUMN (ACTIONS)
-        // ================================
         JPanel rightCard = new JPanel();
         rightCard.setLayout(new BoxLayout(rightCard, BoxLayout.Y_AXIS));
         rightCard.setBackground(Color.WHITE);
@@ -151,7 +139,6 @@ public class ReservationsPage extends JFrame {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
 
-            // **ACTION LISTENER FOR BAGS**
             if (name.equals("Change Number of Checked Bags")) {
                 btn.addActionListener(e -> openBagChangeWindow());
             }
@@ -162,9 +149,6 @@ public class ReservationsPage extends JFrame {
 
         rightSide.add(rightCard);
 
-        // ================================
-        // BOTTOM "BACK" BUTTON
-        // ================================
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         bottomPanel.setBackground(BG_COLOR);
@@ -186,9 +170,6 @@ public class ReservationsPage extends JFrame {
         setVisible(true);
     }
 
-    // ====================================================
-    // POPUP WINDOW FOR MODIFYING CHECKED BAGS
-    // ====================================================
     private void openBagChangeWindow() {
         JFrame bagFrame = new JFrame("Modify Checked Bags");
         bagFrame.setSize(350, 180);
@@ -201,7 +182,6 @@ public class ReservationsPage extends JFrame {
         JLabel label = new JLabel("Enter new number of checked bags:");
         label.setFont(new Font("Arial", Font.BOLD, 14));
 
-        // Spinner for number of bags (with arrows)
         SpinnerNumberModel model = new SpinnerNumberModel(2, 0, 10, 1);
         JSpinner bagSpinner = new JSpinner(model);
         Dimension spinnerSize = new Dimension(80, 28);
@@ -231,9 +211,6 @@ public class ReservationsPage extends JFrame {
         bagFrame.setVisible(true);
     }
 
-    // ================================
-    // DETAIL ROW BUILDER
-    // ================================
     private JPanel createDetailRow(String labelText, String valueText) {
         JPanel row = new JPanel(new BorderLayout());
         row.setOpaque(false);
