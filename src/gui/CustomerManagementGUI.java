@@ -5,21 +5,22 @@ import java.awt.*;
 
 import model.*;
 
+//This is the page that the flight agent will be able to access to manage the customer data.
+
 public class CustomerManagementGUI extends JFrame {
 
-    private CustomerManager manager = new CustomerManager();
+    private CustomerManager manager = CustomerManager.getInstance();
 
     private JTextField idField, fnField, lnField, emailField, pwField;
     private JTextArea output;
 
     public CustomerManagementGUI() {
-        super("Customer Management");
+        super("Flight Booking System");
 
         setSize(700, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // ---------------- INPUTS ----------------
         JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
 
         inputPanel.add(new JLabel("Customer ID:"));
@@ -42,7 +43,6 @@ public class CustomerManagementGUI extends JFrame {
         pwField = new JTextField();
         inputPanel.add(pwField);
 
-        // ---------------- BUTTONS ----------------
         JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 10));
 
         JButton addBtn = new JButton("Add");
@@ -55,25 +55,22 @@ public class CustomerManagementGUI extends JFrame {
         buttonPanel.add(removeBtn);
         buttonPanel.add(showBtn);
 
-        // ---------------- OUTPUT ----------------
         output = new JTextArea();
         output.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(output);
 
-        // ---------------- LAYOUT ----------------
         setLayout(new BorderLayout(10, 10));
         add(inputPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.CENTER);
         add(scrollPane, BorderLayout.SOUTH);
 
-        // ---------------- ACTIONS ----------------
         addBtn.addActionListener(e -> addCustomer());
         updateBtn.addActionListener(e -> updateCustomer());
         removeBtn.addActionListener(e -> removeCustomer());
         showBtn.addActionListener(e -> showCustomers());
     }
 
-    private void addCustomer() {
+    private void addCustomer() { 
         try {
             int id = Integer.parseInt(idField.getText());
             Customer c = new Customer(
