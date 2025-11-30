@@ -3,9 +3,14 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+import java.util.ArrayList;
+
+import dao.planes_dao;
 import dao.users_dao;
-import model.Customer;
-import model.User;
+import model.*;
+import gui.*;
+import controller.*;
 
 //This page is shown at the very beginning of the application to login
 
@@ -34,24 +39,18 @@ public class LoginPage extends JFrame {
 
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.add(title, BorderLayout.CENTER);
-
         titlePanel.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
-
         titlePanel.setOpaque(false);
-
         add(titlePanel, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        
         mainPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        //for username
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridx = 0; gbc.gridy = 0;
         JLabel userLabel = new JLabel("Username:");
         userLabel.setForeground(Color.WHITE);
         mainPanel.add(userLabel, gbc);
@@ -61,9 +60,7 @@ public class LoginPage extends JFrame {
         usernameField.setPreferredSize(new Dimension(150, 25));
         mainPanel.add(usernameField, gbc);
 
-        //for password
-        gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 1;
         JLabel passLabel = new JLabel("Password:");
         passLabel.setForeground(Color.WHITE);
         mainPanel.add(passLabel, gbc);
@@ -73,21 +70,17 @@ public class LoginPage extends JFrame {
         passwordField.setPreferredSize(new Dimension(150, 25));
         mainPanel.add(passwordField, gbc);
 
-        //for login button
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         loginBtn = new JButton("Login");
         mainPanel.add(loginBtn, gbc);
 
-        //register button
         gbc.gridy = 3;
         registerBtn = new JButton("Register");
         mainPanel.add(registerBtn, gbc);
 
         add(mainPanel, BorderLayout.CENTER);
 
+        // ========== LOGIN LOGIC ==========
         loginBtn.addActionListener(e -> {
             String email = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -95,26 +88,39 @@ public class LoginPage extends JFrame {
             boolean validLogin = userDao.validateLogin(email, password);
 
             if (!validLogin) {
-                JOptionPane.showMessageDialog(this, "Incorrect email or password", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Incorrect email or password",
+                        "Login Failed", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            Customer loggedInCustomer = userDao.getCustomerByEmail(email);
 
             String role = userDao.getRoleByEmail(email);
 
             switch (role) {
+
                 case "Customer":
-                    new HomePage();
+                    dispose();
+                    new HomePage(loggedInCustomer).setVisible(true);
                     break;
+
                 case "Agent":
-                    new CustomerManagementGUI();
+                    dispose();
+                    new CustomerManagementGUI().setVisible(true);
                     break;
+
                 case "Admin":
-                    new FlightManagementGUI();
+                    ManageFlightController flightController = new ManageFlightController();
+                    planes_dao planesDao = new planes_dao();
+                    List<Plane> allPlanes = planesDao.getAllPlanes();
+
+                    dispose();
+                    new FlightManagementGUI(flightController, allPlanes).setVisible(true);
                     break;
             }
-            dispose();
         });
 
+        // ========== REGISTER ==========
         registerBtn.addActionListener(e -> {
             new RegisterPage().setVisible(true);
             dispose();

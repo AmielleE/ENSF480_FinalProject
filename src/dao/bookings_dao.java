@@ -48,6 +48,8 @@ public class bookings_dao {
         }
     }
 
+    
+
     public BookingSummary getBookingSummary(int confirmationNumber) {
         String sql = "SELECT flightID, seatsBooked FROM bookings WHERE confirmationNumber = ?";
 

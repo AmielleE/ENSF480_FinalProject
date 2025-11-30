@@ -8,130 +8,89 @@ import model.Customer;
 //This page is used for creating new customer users
 
 public class RegisterPage extends JFrame {
+
     private JTextField firstNameField;
     private JTextField lastNameField;
     private JTextField emailField;
     private JPasswordField passwordField;
-    private JButton registerBtn;
-    private JButton cancelBtn;
 
-    private users_dao usersDao = new users_dao();
+    public RegisterPage() {
 
-    public RegisterPage(){
-        setTitle("Flight Booking System");
-        setSize(500, 400);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setTitle("Register");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 350);
         setLocationRelativeTo(null);
-        setResizable(false);
-
-        getContentPane().setBackground(new Color(90,200,200));
         setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("Create Account", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 26));
-        title.setForeground(Color.WHITE);
-
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.add(title, BorderLayout.CENTER);
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
-        titlePanel.setOpaque(false);
-
-        add(titlePanel, BorderLayout.NORTH);
-
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setOpaque(false);
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.CENTER;
 
-        //First Name
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        JLabel fnLabel = new JLabel("First name:");
-        fnLabel.setForeground(Color.WHITE);
-        formPanel.add(fnLabel, gbc);
+        firstNameField = new JTextField(15);
+        lastNameField = new JTextField(15);
+        emailField = new JTextField(15);
+        passwordField = new JPasswordField(15);
 
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("First Name:"), gbc);
         gbc.gridx = 1;
-        firstNameField = new JTextField();
-        firstNameField.setPreferredSize(new Dimension(150, 25));
         formPanel.add(firstNameField, gbc);
 
-        //Last Name
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        JLabel lnLabel = new JLabel("Last name:");
-        lnLabel.setForeground(Color.WHITE);
-        formPanel.add(lnLabel, gbc);
-
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Last Name:"), gbc);
         gbc.gridx = 1;
-        lastNameField = new JTextField();
-        lastNameField.setPreferredSize(new Dimension(150, 25));
         formPanel.add(lastNameField, gbc);
 
-        //Email
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setForeground(Color.WHITE);
-        formPanel.add(emailLabel, gbc);
-
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Email:"), gbc);
         gbc.gridx = 1;
-        emailField = new JTextField();
-        emailField.setPreferredSize(new Dimension(150, 25));
         formPanel.add(emailField, gbc);
 
-        //Password
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        JLabel pwLabel = new JLabel("Password:");
-        pwLabel.setForeground(Color.WHITE);
-        formPanel.add(pwLabel, gbc);
-
+        gbc.gridx = 0; gbc.gridy = 3;
+        formPanel.add(new JLabel("Password:"), gbc);
         gbc.gridx = 1;
-        passwordField = new JPasswordField();
-        passwordField.setPreferredSize(new Dimension(150, 25));
         formPanel.add(passwordField, gbc);
 
-        //Buttons row
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
+        JButton registerBtn = new JButton("Register");
+        JButton cancelBtn = new JButton("Cancel");
 
         JPanel buttonPanel = new JPanel();
-        registerBtn = new JButton("Register");
-        cancelBtn = new JButton("Cancel");
         buttonPanel.add(registerBtn);
         buttonPanel.add(cancelBtn);
-        formPanel.add(buttonPanel, gbc);
 
         add(formPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
 
-        //Register Button Logic
+        // REGISTER button logic
         registerBtn.addActionListener(e -> {
             String fn = firstNameField.getText().trim();
             String ln = lastNameField.getText().trim();
             String email = emailField.getText().trim();
-            String pw = new String (passwordField.getPassword());
+            String pw = new String(passwordField.getPassword());
 
             if (fn.isEmpty() || ln.isEmpty() || email.isEmpty() || pw.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "All fields must be filled.");
                 return;
             }
 
-            Customer newCustomer = new Customer(fn, ln, email, pw);
-            int id = usersDao.addUser(newCustomer);
+            users_dao usersDao = new users_dao();
 
-            if (id > 0) {
-                JOptionPane.showMessageDialog(this, "Account created successfully! You can now log in.");
+            int newID = (int)(Math.random() * 9000) + 1000;
+
+            Customer newCustomer = new Customer(newID, fn, ln, email, pw);
+
+            boolean ok = usersDao.insertCustomer(newCustomer);
+
+            if (ok) {
+                JOptionPane.showMessageDialog(this, "Account created successfully!");
                 dispose();
                 new LoginPage().setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(this, "An account using this email already exsists.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Account creation failed.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
+        // CANCEL button logic
         cancelBtn.addActionListener(e -> {
             dispose();
             new LoginPage().setVisible(true);

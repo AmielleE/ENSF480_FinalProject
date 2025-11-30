@@ -1,15 +1,24 @@
 package gui;
 
 import javax.swing.*;
+import dao.flights_dao;
+import dao.bookings_dao;
+import model.Customer;
+import model.Flight;
+
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-//This page is the first page the customer sees when a customer logs in. It serves as a starting point for booking flights, and also to see your reservations.
+import java.util.List;
+import java.util.ArrayList;
 
 public class HomePage extends JFrame {
 
-    public HomePage() {
+    private Customer currentCustomer;
+
+    public HomePage(Customer customer) {
+        this.currentCustomer = customer;
+
         setTitle("Flight Booking System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -17,11 +26,11 @@ public class HomePage extends JFrame {
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 100;
         setSize(screenWidth, screenHeight);
 
-        getContentPane().setBackground(new Color(90, 200, 200)); 
+        getContentPane().setBackground(new Color(90, 200, 200));
         setLayout(new BorderLayout());
 
         JPanel outer = new JPanel(new GridBagLayout());
-        outer.setOpaque(false); 
+        outer.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
 
         JPanel column = new JPanel();
@@ -105,19 +114,41 @@ public class HomePage extends JFrame {
         outer.add(column, gbc);
         add(outer, BorderLayout.CENTER);
 
-        reservationsBtn.addActionListener(e-> {
-            dispose();
-            new ReservationsPage().setVisible(true);
-        });
-
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setOpaque(false);
         JButton logoutBtn = new JButton("Logout");
         bottomPanel.add(logoutBtn, BorderLayout.EAST);
 
+        // SEARCH FLIGHTS
         searchBtn.addActionListener(e -> {
-            dispose();
+            String origin = fromField.getText().trim();
+            String dest = toField.getText().trim();
 
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+            String date = fmt.format((Date) dateSpinner.getValue());
+
+            flights_dao dao = new flights_dao();
+            List<Flight> results = dao.searchFlights(origin, dest, date);
+
+            dispose();
+            new FlightsListPage(currentCustomer, results).setVisible(true);
+        });
+
+        // VIEW RESERVATIONS
+        reservationsBtn.addActionListener(e -> {
+            bookings_dao dao = new bookings_dao();
+            int userID = currentCustomer.getId();
+
+            List<Integer> confNums = dao.getBookingConfirmationNumbersForUser(userID);
+            List<bookings_dao.BookingSummary> list = new ArrayList<>();
+
+            for (int c : confNums) {
+                bookings_dao.BookingSummary s = dao.getBookingSummary(c);
+                if (s != null) list.add(s);
+            }
+
+            dispose();
+            new ReservationsPage(currentCustomer, list).setVisible(true);
         });
 
         logoutBtn.addActionListener(e -> {
@@ -126,7 +157,6 @@ public class HomePage extends JFrame {
         });
 
         add(bottomPanel, BorderLayout.SOUTH);
-
         setVisible(true);
     }
 }

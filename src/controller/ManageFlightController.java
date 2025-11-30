@@ -3,8 +3,10 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.flights_dao;
 import model.Flight;
 import model.Plane;
+import dao.*;
 
 //Manage Flight controller with a list of flights and the required operations (view, add, remove, update flight)
 
@@ -12,8 +14,15 @@ public class ManageFlightController {
 
     private List<Flight> flights = new ArrayList<>();
 
+    public boolean addFlight(Flight flight) {
+        flights_dao dao = new flights_dao();
+        return dao.insertFlight(flight);   // or dao.addFlight(flight) if your DAO uses that name
+    }
+    
+    // Get ALL flights (returns a copy so the list cannot be externally modified)
     public List<Flight> getAllFlights() {
-        return new ArrayList<>(flights);
+        flights_dao dao = new flights_dao();
+        return dao.getAllFlights();
     }
 
     public List<Flight> viewFlights(String origin, String destination, String date) { //using search criteria
@@ -32,36 +41,21 @@ public class ManageFlightController {
         return result;
     }
 
-    public boolean addFlight(Flight flight) { //creating unique flights
-        for (Flight f : flights) {
-            if (f.getFlightID().equals(flight.getFlightID())) {
-                return false; 
-            }
-        }
-        flights.add(flight);
-        return true;
-    }
-
+    // Add a new flight — ensures no duplicates
     public boolean removeFlight(String flightID) {
-        return flights.removeIf(f -> f.getFlightID().equals(flightID));
+        flights_dao dao = new flights_dao();
+        return dao.deleteFlight(flightID);
     }
 
-    public boolean updateFlight(String flightID, String newOrigin, String newDestination, String newDate, String newDepartureTime, String newArrivalTime, Double newPrice, Plane newPlane) 
-    { //only updates the fields that are entered (not null) 
-        for (Flight f : flights) {
-            if (f.getFlightID().equals(flightID)) {
+    // Update Flight — only updates fields that are != null
+    public boolean updateFlight(String flightID, String origin, String dest,
+                            String date, String dep, String arr,
+                            Double price, Plane plane) {
 
-                if (newOrigin != null && !newOrigin.isEmpty()) f.setOrigin(newOrigin);
-                if (newDestination != null && !newDestination.isEmpty()) f.setDestination(newDestination);
-                if (newDate != null && !newDate.isEmpty()) f.setDate(newDate);
-                if (newDepartureTime != null && !newDepartureTime.isEmpty()) f.setDepartureTime(newDepartureTime);
-                if (newArrivalTime != null && !newArrivalTime.isEmpty()) f.setArrivalTime(newArrivalTime);
-                if (newPrice != null) f.setPrice(newPrice);
-                if (newPlane != null) f.setPlane(newPlane);
+    // Build updated Flight object
+    Flight updated = new Flight(flightID, origin, dest, date, dep, arr, price, plane);
 
-                return true;
-            }
-        }
-        return false;
+    flights_dao dao = new flights_dao();
+        return dao.updateFlight(updated);
     }
 }
