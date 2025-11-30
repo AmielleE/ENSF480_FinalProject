@@ -13,6 +13,7 @@ public class PaymentInfo {
         this.expiryDate = expiry;
     }
 
+    //Getters
     public String getCardNumber() {return cardNumber;}
     public String getName() {return name;}
     public int getSecurityCode() {return securityCode;}

@@ -7,6 +7,8 @@ import java.util.List;
 import model.Customer;
 import dao.users_dao;
 
+//This is the page that the flight agent will be able to access to manage the customer data.
+
 public class CustomerManagementGUI extends JFrame {
 
     private users_dao userDao = new users_dao();
@@ -83,7 +85,7 @@ public class CustomerManagementGUI extends JFrame {
         });
     }
 
-    private void addCustomer() {
+    private void addCustomer() { 
         try {
             int id = Integer.parseInt(idField.getText());
             Customer c = new Customer(

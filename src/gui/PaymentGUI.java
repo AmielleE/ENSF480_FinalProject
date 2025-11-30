@@ -6,6 +6,8 @@ import java.awt.*;
 import controller.*;
 import model.*;
 
+//This is the payment page after making a booking
+
 public class PaymentGUI extends JFrame {
 
     private JTextField nameField;
@@ -17,14 +19,13 @@ public class PaymentGUI extends JFrame {
     private PaymentController controller;
 
     public PaymentGUI() {
-        super("Payment Simulation");
+        super("Flight Booking System");
 
         controller = new PaymentController();
 
         setLayout(new BorderLayout());
         JPanel form = new JPanel(new GridLayout(6, 2, 10, 10));
 
-        // Fields based on your activity diagram
         form.add(new JLabel("Cardholder Name:"));
         nameField = new JTextField();
         form.add(nameField);
@@ -64,7 +65,6 @@ public class PaymentGUI extends JFrame {
             String expiry = expiryField.getText();
             String email = emailField.getText();
 
-            // Build PaymentInfo object from your class
             PaymentInfo info = new PaymentInfo(cardNum, name, cvv, expiry);
 
             boolean success = controller.pay(info);

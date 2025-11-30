@@ -11,6 +11,8 @@ import model.Booking;
 import dao.bookings_dao;
 import dao.bookings_dao.BookingSummary;
 
+//This page contains the operations to make a booking (reservation) for a customer
+
 public class ReservationsPage extends JFrame {
 
     private Customer customer;

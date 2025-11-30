@@ -8,6 +8,8 @@ import model.Flight;
 import model.Plane;
 import dao.*;
 
+//Manage Flight controller with a list of flights and the required operations (view, add, remove, update flight)
+
 public class ManageFlightController {
 
     private List<Flight> flights = new ArrayList<>();
@@ -23,8 +25,7 @@ public class ManageFlightController {
         return dao.getAllFlights();
     }
 
-    // View flights matching search criteria
-    public List<Flight> viewFlights(String origin, String destination, String date) {
+    public List<Flight> viewFlights(String origin, String destination, String date) { //using search criteria
         List<Flight> result = new ArrayList<>();
 
         for (Flight f : flights) {
