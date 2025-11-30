@@ -39,53 +39,84 @@ public class flights_dao {
     public List<Flight> searchFlights(String origin, String destination, String date) {
         List<Flight> flights = new ArrayList<>();
 
-        String sql = "SELECT * FROM flights WHERE origin = ? AND destination = ? AND flightDate = ?";
+        // ---- 1. First try exact date match ----
+        String exactSql = "SELECT * FROM flights " +
+                        "WHERE LOWER(origin) = LOWER(?) " +
+                        "AND LOWER(destination) = LOWER(?) " +
+                        "AND flightDate = ?";
 
         try (Connection conn = database.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(exactSql)) {
 
-            ps.setString(1, origin);
-            ps.setString(2, destination);
-            ps.setString(3, date);
+            ps.setString(1, origin.trim());
+            ps.setString(2, destination.trim());
+            ps.setString(3, date.trim());
 
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()) {
-                String flightID   = rs.getString("flightID");
-                String flightDate = rs.getString("flightDate");
-                String flightTime = rs.getString("flightTime");
-                double price      = rs.getDouble("price");
-                String planeID    = rs.getString("planeID");
-                int seatsAvail    = rs.getInt("seatsAvailable");
-
-                // Fetch Plane object
-                planes_dao pdao = new planes_dao();
-                Plane plane = pdao.getPlaneByID(planeID);
-
-                // Build Flight object
-                Flight f = new Flight(
-                    flightID,
-                    origin,
-                    destination,
-                    flightDate,
-                    flightTime,  // stored as departure
-                    "",          // arrival time (you can fill later)
-                    price,
-                    plane
-                );
-
-                f.setSeatsAvailable(seatsAvail);
-
-                flights.add(f);
-            }
+            while (rs.next()) flights.add(buildFlightFromResult(rs));
 
         } catch (SQLException e) {
-            System.out.println("searchFlights error: " + e.getMessage());
+            System.out.println("searchFlights exact error: " + e.getMessage());
+        }
+
+        // ---- If flights found → return now ----
+        if (!flights.isEmpty()) {
+            return flights;
+        }
+
+        // ---- 2. No exact match → search within ±2 months ----
+        String rangeSql = "SELECT * FROM flights " +
+                        "WHERE LOWER(origin) = LOWER(?) " +
+                        "AND LOWER(destination) = LOWER(?) " +
+                        "AND flightDate BETWEEN DATE(?, '-2 months') AND DATE(?, '+2 months')";
+
+        try (Connection conn = database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(rangeSql)) {
+
+            ps.setString(1, origin.trim());
+            ps.setString(2, destination.trim());
+            ps.setString(3, date.trim());
+            ps.setString(4, date.trim());
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) flights.add(buildFlightFromResult(rs));
+
+        } catch (SQLException e) {
+            System.out.println("searchFlights range error: " + e.getMessage());
         }
 
         return flights;
     }
 
+    private Flight buildFlightFromResult(ResultSet rs) throws SQLException {
+        String flightID   = rs.getString("flightID");
+        String origin     = rs.getString("origin");
+        String dest       = rs.getString("destination");
+        String flightDate = rs.getString("flightDate");
+        String flightTime = rs.getString("flightTime");
+        double price      = rs.getDouble("price");
+        String planeID    = rs.getString("planeID");
+        int seatsAvail    = rs.getInt("seatsAvailable");
+
+        Plane plane = planesDao.getPlaneByID(planeID);
+
+        Flight f = new Flight(
+            flightID,
+            origin,
+            dest,
+            flightDate,
+            flightTime,
+            "",
+            price,
+            plane
+        );
+
+        f.setSeatsAvailable(seatsAvail);
+
+        return f;
+    }
 
 
     public Flight getFlightById(String flightID) {

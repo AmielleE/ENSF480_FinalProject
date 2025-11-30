@@ -3,23 +3,26 @@ package model;
 import java.util.List;
 
 public class Booking {
+
     private int confirmationNumber;
     private Customer customer;
     private Flight flight;
-    private List<String> seatNumbers; //like 3A, 23C
+    private List<String> seatNumbers;
 
+    // Constructor used by bookings_dao (no Customer passed)
+    public Booking(int confirmationNumber, Flight flight, List<String> seatNumbers) {
+        this.confirmationNumber = confirmationNumber;
+        this.flight = flight;
+        this.seatNumbers = seatNumbers;
+        this.customer = null;
+    }
+
+    // Constructor used by BookingController (Customer included)
     public Booking(int confirmationNumber, Customer customer, Flight flight, List<String> seatNumbers) {
         this.confirmationNumber = confirmationNumber;
         this.customer = customer;
         this.flight = flight;
         this.seatNumbers = seatNumbers;
-
-        for (String seat : seatNumbers) {
-            flight.getSeatMap().bookSeat(seat);
-        }
-
-        flight.addPassenger(customer);
-        flight.addReservation(this);
     }
 
     // Getters
@@ -28,6 +31,7 @@ public class Booking {
     public Flight getFlight() { return flight; }
     public List<String> getSeatNumbers() { return seatNumbers; }
 
+    // Cancel booking
     public void cancel() {
         for (String seat : seatNumbers) {
             flight.getSeatMap().cancelSeat(seat);
@@ -37,6 +41,7 @@ public class Booking {
 
     // Modify booking
     public boolean modifyBooking(Flight newFlight, List<String> newSeats) {
+
         // Free old seats
         for (String seat : seatNumbers) {
             flight.getSeatMap().cancelSeat(seat);
@@ -55,18 +60,21 @@ public class Booking {
             this.seatNumbers = newSeats;
             System.out.println("Booking " + confirmationNumber + " modified.");
             return true;
-        } else {
-            for (String seat : seatNumbers) {
-                flight.getSeatMap().bookSeat(seat);
-            }
-            System.out.println("Modification failed: Some seats are not available.");
-            return false;
         }
+
+        // Rollback old seats if modification failed
+        for (String seat : seatNumbers) {
+            flight.getSeatMap().bookSeat(seat);
+        }
+
+        System.out.println("Modification failed: Some seats are not available.");
+        return false;
     }
 
     public String getBookingSummary() {
         return "Booking #" + confirmationNumber +
-                "\nCustomer: " + customer.firstName + " " + customer.lastName +
+                "\nCustomer: " + 
+                (customer != null ? customer.firstName + " " + customer.lastName : "Unknown") +
                 "\nFlight: " + flight.getFlightID() +
                 " (" + flight.getOrigin() + " → " + flight.getDestination() + ")" +
                 "\nDate: " + flight.getDate() +

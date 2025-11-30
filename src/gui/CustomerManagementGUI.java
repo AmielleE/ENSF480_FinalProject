@@ -2,14 +2,14 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
-import model.*;
-
-//This is the page that the flight agent will be able to access to manage the customer data.
+import model.Customer;
+import dao.users_dao;
 
 public class CustomerManagementGUI extends JFrame {
 
-    private CustomerManager manager = CustomerManager.getInstance();
+    private users_dao userDao = new users_dao();
 
     private JTextField idField, fnField, lnField, emailField, pwField;
     private JTextArea output;
@@ -64,13 +64,26 @@ public class CustomerManagementGUI extends JFrame {
         add(buttonPanel, BorderLayout.CENTER);
         add(scrollPane, BorderLayout.SOUTH);
 
+        // Button logic
         addBtn.addActionListener(e -> addCustomer());
         updateBtn.addActionListener(e -> updateCustomer());
         removeBtn.addActionListener(e -> removeCustomer());
         showBtn.addActionListener(e -> showCustomers());
+
+        // ===== LOGOUT BUTTON =====
+        JButton logoutBtn = new JButton("Logout");
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.add(logoutBtn);
+
+        add(bottomPanel, BorderLayout.PAGE_END);
+
+        logoutBtn.addActionListener(e -> {
+            dispose();
+            new LoginPage().setVisible(true);
+        });
     }
 
-    private void addCustomer() { 
+    private void addCustomer() {
         try {
             int id = Integer.parseInt(idField.getText());
             Customer c = new Customer(
@@ -81,10 +94,12 @@ public class CustomerManagementGUI extends JFrame {
                     pwField.getText()
             );
 
-            manager.addCustomer(c);
-            JOptionPane.showMessageDialog(this, "Customer added!");
-            clearFields();
-        } catch (NumberFormatException ex) {
+            boolean ok = userDao.insertCustomer(c);
+
+            if (ok) JOptionPane.showMessageDialog(this, "Customer added.");
+            else JOptionPane.showMessageDialog(this, "Insert failed.");
+
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "ID must be a number.");
         }
     }
@@ -92,13 +107,19 @@ public class CustomerManagementGUI extends JFrame {
     private void updateCustomer() {
         try {
             int id = Integer.parseInt(idField.getText());
-            boolean ok = manager.updateCustomer(id,
-                    fnField.getText(), lnField.getText(),
-                    emailField.getText(), pwField.getText());
 
-            if (ok) JOptionPane.showMessageDialog(this, "Customer updated!");
-            else JOptionPane.showMessageDialog(this, "Customer not found!");
-        } catch (NumberFormatException ex) {
+            boolean ok = userDao.updateCustomer(
+                    id,
+                    fnField.getText(),
+                    lnField.getText(),
+                    emailField.getText(),
+                    pwField.getText()
+            );
+
+            if (ok) JOptionPane.showMessageDialog(this, "Customer updated.");
+            else JOptionPane.showMessageDialog(this, "Customer not found.");
+
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "ID must be a number.");
         }
     }
@@ -106,36 +127,28 @@ public class CustomerManagementGUI extends JFrame {
     private void removeCustomer() {
         try {
             int id = Integer.parseInt(idField.getText());
-            boolean ok = manager.removeCustomer(id);
 
-            if (ok) {
-                JOptionPane.showMessageDialog(this, "Customer removed!");
-                clearFields();
-            } else {
-                JOptionPane.showMessageDialog(this, "Customer not found!");
-            }
-        } catch (NumberFormatException ex) {
+            boolean ok = userDao.removeCustomer(id);
+            if (ok) JOptionPane.showMessageDialog(this, "Customer removed.");
+            else JOptionPane.showMessageDialog(this, "Customer not found.");
+
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "ID must be a number.");
         }
     }
 
     private void showCustomers() {
-        StringBuilder sb = new StringBuilder();
-        for (Customer c : manager.getAllCustomers()) {
-            sb.append(c.getId()).append(" - ")
-                    .append(c.getFirstName()).append(" ")
-                    .append(c.getLastName()).append(" - ")
-                    .append(c.getEmail()).append("\n");
-        }
-        output.setText(sb.toString());
-    }
+        List<Customer> list = userDao.getAllCustomers();
 
-    private void clearFields() {
-        idField.setText("");
-        fnField.setText("");
-        lnField.setText("");
-        emailField.setText("");
-        pwField.setText("");
+        StringBuilder sb = new StringBuilder();
+        for (Customer c : list) {
+            sb.append(c.getId()).append(" - ")
+              .append(c.getFirstName()).append(" ")
+              .append(c.getLastName()).append(" - ")
+              .append(c.getEmail()).append("\n");
+        }
+
+        output.setText(sb.toString());
     }
 
     public static void main(String[] args) {

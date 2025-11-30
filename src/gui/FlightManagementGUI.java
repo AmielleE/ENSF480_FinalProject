@@ -1,92 +1,96 @@
 package gui;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import java.util.ArrayList;
 
-import controller.*;
-import model.*;
+import controller.ManageFlightController;
+import dao.flights_dao;
+import model.Flight;
+import model.Plane;
 
-//This is the page that the system admin will see when login in. They can then add, remove, modify flights.
-
+// Admin page – add / update / remove flights
 public class FlightManagementGUI extends JFrame {
 
-    private ManageFlightController flightController;
+    private ManageFlightController controller;
+    private List<Plane> planes;
 
-    private JTable flightTable;
-    private DefaultTableModel tableModel;
+    private JTextField flightIdField;
+    private JTextField originField;
+    private JTextField destField;
+    private JTextField dateField;
+    private JTextField depField;
+    private JTextField arrField;
+    private JTextField priceField;
+    private JComboBox<String> planeCombo;
 
-    private JTextField idField, originField, destinationField, dateField, departureField, arrivalField, priceField;
-    private JComboBox<Plane> planeCombo;
+    private DefaultTableModel flightsModel;
+    private JTable flightsTable;
 
-    private List<Plane> availablePlanes = new ArrayList<>();
+    private flights_dao flightsDao = new flights_dao();
 
     public FlightManagementGUI(ManageFlightController controller, List<Plane> planes) {
-        super("Flight Booking System");
-        this.flightController = controller;
-        this.availablePlanes = planes;
+        this.controller = controller;
+        this.planes = planes;
 
+        setTitle("Flight Management");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(900, 500);
         setLocationRelativeTo(null);
-        initComponents();
-        refreshTable();
-    }
-
-    private void initComponents() {
         setLayout(new BorderLayout(8, 8));
 
+        buildFormPanel();
+        buildTablePanel();
+
+        // load initial flights from DB
+        reloadFlightsTable();
+    }
+
+    // ---------------- UI BUILDING ----------------
+
+    private void buildFormPanel() {
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(6,6,6,6);
+        c.insets = new Insets(4, 4, 4, 4);
+        c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        idField = new JTextField();
-        originField = new JTextField();
-        destinationField = new JTextField();
-        dateField = new JTextField();
-        departureField = new JTextField();
-        arrivalField = new JTextField();
-        priceField = new JTextField();
+        flightIdField = new JTextField(10);
+        originField   = new JTextField(10);
+        destField     = new JTextField(10);
+        dateField     = new JTextField(10); // yyyy-MM-dd
+        depField      = new JTextField(10);
+        arrField      = new JTextField(10);
+        priceField    = new JTextField(10);
+        planeCombo    = new JComboBox<>();
 
-        planeCombo = new JComboBox<>(availablePlanes.toArray(new Plane[0]));
-        planeCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Plane) {
-                    Plane p = (Plane) value;
-                    setText(p.getModel() + " (" + p.getAircraftID() + ") " + p.getRows() + "x" + p.getCols());
-                } else {
-                    setText("");
-                }
-                return this;
-            }
-        });
+        // fill combo with planes
+        planeCombo.removeAllItems();
+        for (Plane p : planes) {
+            // show: aircraftID (model - airline)
+            planeCombo.addItem(p.getAircraftID() + " (" + p.getModel() + " - " + p.getAirline() + ")");
+        }
 
         int row = 0;
 
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Flight ID:"), c);
-        c.gridx = 1; c.gridy = row++; form.add(idField, c);
+        c.gridx = 1; c.gridy = row++; form.add(flightIdField, c);
 
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Origin:"), c);
         c.gridx = 1; c.gridy = row++; form.add(originField, c);
 
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Destination:"), c);
-        c.gridx = 1; c.gridy = row++; form.add(destinationField, c);
+        c.gridx = 1; c.gridy = row++; form.add(destField, c);
 
-        c.gridx = 0; c.gridy = row; form.add(new JLabel("Date (YYYY-MM-DD):"), c);
+        c.gridx = 0; c.gridy = row; form.add(new JLabel("Date (yyyy-MM-dd):"), c);
         c.gridx = 1; c.gridy = row++; form.add(dateField, c);
 
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Departure Time:"), c);
-        c.gridx = 1; c.gridy = row++; form.add(departureField, c);
+        c.gridx = 1; c.gridy = row++; form.add(depField, c);
 
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Arrival Time:"), c);
-        c.gridx = 1; c.gridy = row++; form.add(arrivalField, c);
+        c.gridx = 1; c.gridy = row++; form.add(arrField, c);
 
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Price:"), c);
         c.gridx = 1; c.gridy = row++; form.add(priceField, c);
@@ -94,161 +98,172 @@ public class FlightManagementGUI extends JFrame {
         c.gridx = 0; c.gridy = row; form.add(new JLabel("Plane:"), c);
         c.gridx = 1; c.gridy = row++; form.add(planeCombo, c);
 
-        add(form, BorderLayout.WEST);
-
-        JPanel center = new JPanel(new BorderLayout(6,6));
-
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
-        JButton addBtn = new JButton("Add Flight");
+        // Buttons
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
+        JButton addBtn    = new JButton("Add Flight");
         JButton updateBtn = new JButton("Update Flight");
         JButton removeBtn = new JButton("Remove Flight");
+        JButton backBtn   = new JButton("Back to Login");
 
         buttons.add(addBtn);
         buttons.add(updateBtn);
         buttons.add(removeBtn);
+        buttons.add(backBtn);
 
-        center.add(buttons, BorderLayout.NORTH);
+        c.gridx = 0; c.gridy = row; c.gridwidth = 2;
+        form.add(buttons, c);
 
-        tableModel = new DefaultTableModel(new String[]{"Flight ID", "Origin", "Destination", "Date", "Departure", "Arrival", "Price", "Plane"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        add(form, BorderLayout.WEST);
 
-        flightTable = new JTable(tableModel);
-        flightTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scroll = new JScrollPane(flightTable);
-        center.add(scroll, BorderLayout.CENTER);
-
-        add(center, BorderLayout.CENTER);
-
-        //Button actions linking to the methods, and the database
-        addBtn.addActionListener(e -> addFlightAction());
-        removeBtn.addActionListener(e -> removeFlightAction());
-        updateBtn.addActionListener(e -> updateFlightAction());
-
-        flightTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) populateFieldsFromSelection();
-            }
+        // button logic
+        addBtn.addActionListener(e -> onAddFlight());
+        updateBtn.addActionListener(e -> onUpdateFlight());
+        removeBtn.addActionListener(e -> onRemoveFlight());
+        backBtn.addActionListener(e -> {
+            dispose();
+            new LoginPage().setVisible(true);
         });
     }
 
-    private void addFlightAction() {
-        try {
-            String id = idField.getText().trim();
-            String origin = originField.getText().trim();
-            String dest = destinationField.getText().trim();
-            String date = dateField.getText().trim();
-            String dep = departureField.getText().trim();
-            String arr = arrivalField.getText().trim();
-            double price = Double.parseDouble(priceField.getText().trim());
-            Plane selectedPlane = (Plane) planeCombo.getSelectedItem();
+    private void buildTablePanel() {
+        flightsModel = new DefaultTableModel(
+                new Object[]{"Flight ID", "Origin", "Destination", "Date",
+                             "Departure", "Arrival", "Price", "Plane ID"}, 0);
 
-            if (id.isEmpty() || origin.isEmpty() || dest.isEmpty() || date.isEmpty() || selectedPlane == null) {
-                JOptionPane.showMessageDialog(this, "Please fill in Flight ID, Origin, Destination, Date and choose a plane.");
+        flightsTable = new JTable(flightsModel);
+        flightsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // when a row is clicked, load values into form for editing
+        flightsTable.getSelectionModel().addListSelectionListener(e -> {
+            int row = flightsTable.getSelectedRow();
+            if (row < 0) return;
+
+            flightIdField.setText((String) flightsModel.getValueAt(row, 0));
+            originField.setText((String) flightsModel.getValueAt(row, 1));
+            destField.setText((String) flightsModel.getValueAt(row, 2));
+            dateField.setText((String) flightsModel.getValueAt(row, 3));
+            depField.setText((String) flightsModel.getValueAt(row, 4));
+            arrField.setText((String) flightsModel.getValueAt(row, 5));
+            priceField.setText(String.valueOf(flightsModel.getValueAt(row, 6)));
+
+            String planeID = (String) flightsModel.getValueAt(row, 7);
+            // select matching plane in combo
+            for (int i = 0; i < planes.size(); i++) {
+                if (planes.get(i).getAircraftID().equals(planeID)) {
+                    planeCombo.setSelectedIndex(i);
+                    break;
+                }
+            }
+        });
+
+        JScrollPane scroll = new JScrollPane(flightsTable);
+        add(scroll, BorderLayout.CENTER);
+    }
+
+    // ---------------- BUTTON HANDLERS ----------------
+
+    private Plane getSelectedPlane() {
+        int idx = planeCombo.getSelectedIndex();
+        if (idx < 0 || idx >= planes.size()) return null;
+        return planes.get(idx);
+    }
+
+    private void onAddFlight() {
+        try {
+            String id   = flightIdField.getText().trim();
+            String orig = originField.getText().trim();
+            String dest = destField.getText().trim();
+            String date = dateField.getText().trim();
+            String dep  = depField.getText().trim();
+            String arr  = arrField.getText().trim();
+            double price = Double.parseDouble(priceField.getText().trim());
+            Plane plane  = getSelectedPlane();
+
+            if (id.isEmpty() || orig.isEmpty() || dest.isEmpty() || date.isEmpty()
+                    || dep.isEmpty() || plane == null) {
+                JOptionPane.showMessageDialog(this, "Fill all fields and select a plane.");
                 return;
             }
 
-            Flight f = new Flight(id, origin, dest, date, dep, arr, price, selectedPlane);
-            boolean ok = flightController.addFlight(f);
-            if (!ok) {
-                JOptionPane.showMessageDialog(this, "A flight with that ID already exists.");
+            Flight f = new Flight(id, orig, dest, date, dep, arr, price, plane);
+
+            boolean ok = flightsDao.insertFlight(f);
+            if (ok) {
+                JOptionPane.showMessageDialog(this, "Flight added.");
+                reloadFlightsTable();
             } else {
-                refreshTable();
-                clearForm();
+                JOptionPane.showMessageDialog(this, "Failed to add flight.");
             }
+
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Price must be a number.");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error adding flight: " + ex.getMessage());
         }
     }
 
-    private void removeFlightAction() {
-        int row = flightTable.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Select a flight to remove.");
-            return;
-        }
-        String flightID = (String) tableModel.getValueAt(row, 0);
-        boolean removed = flightController.removeFlight(flightID);
-        if (!removed) {
-            JOptionPane.showMessageDialog(this, "Failed to remove flight (not found).");
-        } else {
-            refreshTable();
-            clearForm();
-        }
-    }
-
-    private void updateFlightAction() {
-        int row = flightTable.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Select a flight to update.");
-            return;
-        }
-
+    private void onUpdateFlight() {
         try {
-            String flightID = idField.getText().trim();
-            String newOrigin = originField.getText().trim();
-            String newDest = destinationField.getText().trim();
-            String newDate = dateField.getText().trim();
-            String newDep = departureField.getText().trim();
-            String newArr = arrivalField.getText().trim();
-            Double newPrice = priceField.getText().trim().isEmpty() ? null : Double.parseDouble(priceField.getText().trim());
-            Plane newPlane = (Plane) planeCombo.getSelectedItem();
+            String id   = flightIdField.getText().trim();
+            String orig = originField.getText().trim();
+            String dest = destField.getText().trim();
+            String date = dateField.getText().trim();
+            String dep  = depField.getText().trim();
+            String arr  = arrField.getText().trim();
+            double price = Double.parseDouble(priceField.getText().trim());
+            Plane plane  = getSelectedPlane();
 
-            boolean updated = flightController.updateFlight(flightID,
-                    newOrigin.isEmpty() ? null : newOrigin,
-                    newDest.isEmpty() ? null : newDest,
-                    newDate.isEmpty() ? null : newDate,
-                    newDep.isEmpty() ? null : newDep,
-                    newArr.isEmpty() ? null : newArr,
-                    newPrice,
-                    newPlane);
-
-            if (!updated) {
-                JOptionPane.showMessageDialog(this, "Update failed: flight not found.");
-            } else {
-                refreshTable();
-                clearForm();
+            if (id.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Enter an existing Flight ID to update.");
+                return;
             }
+
+            Flight f = new Flight(id, orig, dest, date, dep, arr, price, plane);
+            boolean ok = flightsDao.updateFlight(f);
+
+            if (ok) {
+                JOptionPane.showMessageDialog(this, "Flight updated.");
+                reloadFlightsTable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Update failed. Check Flight ID.");
+            }
+
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Price must be a number.");
         }
     }
 
-    private void populateFieldsFromSelection() {
-        int row = flightTable.getSelectedRow();
-        if (row < 0) return;
+    private void onRemoveFlight() {
+        String id = flightIdField.getText().trim();
+        if (id.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter Flight ID to remove.");
+            return;
+        }
 
-        idField.setText((String) tableModel.getValueAt(row, 0));
-        originField.setText((String) tableModel.getValueAt(row, 1));
-        destinationField.setText((String) tableModel.getValueAt(row, 2));
-        dateField.setText((String) tableModel.getValueAt(row, 3));
-        departureField.setText((String) tableModel.getValueAt(row, 4));
-        arrivalField.setText((String) tableModel.getValueAt(row, 5));
-        priceField.setText(String.valueOf(tableModel.getValueAt(row, 6)));
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Delete flight " + id + "?",
+                "Confirm",
+                JOptionPane.YES_NO_OPTION
+        );
 
-        String aircraftID = (String) tableModel.getValueAt(row, 7);
+        if (confirm != JOptionPane.YES_OPTION) return;
 
-        for (int i = 0; i < planeCombo.getItemCount(); i++) {
-            Plane p = planeCombo.getItemAt(i);
-            if (p.getAircraftID().equals(aircraftID)) {
-                planeCombo.setSelectedIndex(i);
-                break;
-            }
+        boolean ok = flightsDao.deleteFlight(id);
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Flight removed.");
+            reloadFlightsTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Delete failed.");
         }
     }
 
-    private void refreshTable() {
-        tableModel.setRowCount(0);
-        for (Flight f : flightController.getAllFlights()) {
-            Plane p = f.getPlane();
-            String planeDesc = p.getAircraftID(); // only store aircraftID
-            tableModel.addRow(new Object[]{
+    // ---------------- DATA LOADING ----------------
+
+    private void reloadFlightsTable() {
+        flightsModel.setRowCount(0);
+
+        List<Flight> list = flightsDao.getAllFlights();
+        for (Flight f : list) {
+            flightsModel.addRow(new Object[]{
                     f.getFlightID(),
                     f.getOrigin(),
                     f.getDestination(),
@@ -256,39 +271,8 @@ public class FlightManagementGUI extends JFrame {
                     f.getDepartureTime(),
                     f.getArrivalTime(),
                     f.getPrice(),
-                    planeDesc
+                    f.getPlane().getAircraftID()
             });
         }
-    }
-
-    private void clearForm() {
-        idField.setText("");
-        originField.setText("");
-        destinationField.setText("");
-        dateField.setText("");
-        departureField.setText("");
-        arrivalField.setText("");
-        priceField.setText("");
-        if (planeCombo.getItemCount() > 0) planeCombo.setSelectedIndex(0);
-        flightTable.clearSelection();
-    }
-
-    public static void main(String[] args) {
-        //sample planes to have some available when we start
-        Plane p1 = new Plane("A320-01", "Airbus A320", "TestAir", 30, 6);
-        Plane p2 = new Plane("CRJ-200", "Bombardier CRJ200", "RegionalAir", 15, 4);
-        Plane p3 = new Plane("G650", "Gulfstream G650", "PrivateJets", 10, 4);
-        List<Plane> planes = new ArrayList<>();
-        planes.add(p1); planes.add(p2); planes.add(p3);
-
-        //sample flights
-        ManageFlightController controller = new ManageFlightController();
-        controller.addFlight(new Flight("F100", "Calgary", "Toronto", "2025-12-01", "08:00", "12:00", 320.0, p1));
-        controller.addFlight(new Flight("F200", "Edmonton", "Vancouver", "2025-12-02", "09:30", "11:00", 180.0, p2));
-
-        SwingUtilities.invokeLater(() -> {
-            FlightManagementGUI gui = new FlightManagementGUI(controller, planes);
-            gui.setVisible(true);
-        });
     }
 }

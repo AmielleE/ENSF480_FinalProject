@@ -2,8 +2,19 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
+
+import model.Customer;
+import model.Flight;
+import model.Booking;
+import dao.bookings_dao;
+import dao.bookings_dao.BookingSummary;
 
 public class ReservationsPage extends JFrame {
+
+    private Customer customer;
+    private List<BookingSummary> bookings;
 
     private static final Color BG_COLOR = new Color(90, 200, 200);
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 26);
@@ -11,9 +22,14 @@ public class ReservationsPage extends JFrame {
     private static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 14);
     private static final Font VALUE_FONT = new Font("Arial", Font.PLAIN, 14);
 
-    public ReservationsPage() {
-        // Title of the window
-        setTitle("Flight Booking System - Reservations");
+    private JPanel middleCard;
+
+    // Constructor for Book Now
+    public ReservationsPage(Customer customer, Flight flight) {
+        this.customer = customer;
+        this.bookings = null;
+
+        setTitle("Booking Details");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -24,158 +40,57 @@ public class ReservationsPage extends JFrame {
         getContentPane().setBackground(BG_COLOR);
         setLayout(new BorderLayout(10, 10));
 
-        // ================================
-        // TOP HEADER
-        // ================================
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(BG_COLOR);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JLabel headerTitle = new JLabel("My Reservations");
+        JLabel headerTitle = new JLabel("Booking Details");
         headerTitle.setFont(TITLE_FONT);
         headerTitle.setForeground(Color.WHITE);
+        headerPanel.add(headerTitle, BorderLayout.WEST);
 
-        JLabel headerSubtitle = new JLabel("Select a reservation on the left to view details");
-        headerSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
-        headerSubtitle.setForeground(Color.WHITE);
-
-        JPanel headerTextPanel = new JPanel();
-        headerTextPanel.setLayout(new BoxLayout(headerTextPanel, BoxLayout.Y_AXIS));
-        headerTextPanel.setBackground(BG_COLOR);
-        headerTextPanel.add(headerTitle);
-        headerTextPanel.add(Box.createVerticalStrut(4));
-        headerTextPanel.add(headerSubtitle);
-
-        headerPanel.add(headerTextPanel, BorderLayout.WEST);
         add(headerPanel, BorderLayout.NORTH);
 
-        // ================================
-        // LEFT COLUMN (SCROLLABLE LIST)
-        // ================================
-        JPanel leftColumn = new JPanel();
-        leftColumn.setLayout(new BoxLayout(leftColumn, BoxLayout.Y_AXIS));
-        leftColumn.setBackground(BG_COLOR);
-        leftColumn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel leftTitle = new JLabel("Reservations");
-        leftTitle.setFont(SECTION_TITLE_FONT);
-        leftTitle.setForeground(Color.WHITE);
-        leftTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        leftColumn.add(leftTitle);
-        leftColumn.add(Box.createVerticalStrut(10));
-
-        for (int i = 1; i <= 30; i++) {
-            JButton btn = new JButton("Reservation #" + i);
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(180, 30));
-            leftColumn.add(btn);
-            leftColumn.add(Box.createVerticalStrut(5));
-        }
-
-        JScrollPane leftScroll = new JScrollPane(leftColumn);
-        leftScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        leftScroll.setPreferredSize(new Dimension(230, screenHeight));
-        leftScroll.getViewport().setBackground(BG_COLOR);
-        leftScroll.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.WHITE));
-
-        add(leftScroll, BorderLayout.WEST);
-
-        // ====================================
-        // RIGHT SIDE (DETAILS + ACTIONS)
-        // ====================================
-        JPanel rightSide = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel rightSide = new JPanel(new BorderLayout());
         rightSide.setBackground(BG_COLOR);
-        rightSide.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(rightSide, BorderLayout.CENTER);
 
-        // ================================
-        // MIDDLE COLUMN (DETAILS)
-        // ================================
-        JPanel middleCard = new JPanel();
+        middleCard = new JPanel();
         middleCard.setLayout(new BoxLayout(middleCard, BoxLayout.Y_AXIS));
         middleCard.setBackground(Color.WHITE);
-        middleCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
+        middleCard.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        rightSide.add(middleCard, BorderLayout.CENTER);
 
-        JLabel detailsTitle = new JLabel("Reservation Details");
-        detailsTitle.setFont(SECTION_TITLE_FONT);
-        detailsTitle.setForeground(new Color(50, 50, 50));
-        detailsTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Display flight details
+        showSingleFlightDetails(flight);
 
-        middleCard.add(detailsTitle);
-        middleCard.add(Box.createVerticalStrut(15));
+        // Confirm booking button
+        JButton confirmBtn = new JButton("Confirm Booking");
+        confirmBtn.addActionListener(e -> {
+            bookings_dao dao = new bookings_dao();
 
-        middleCard.add(createDetailRow("Departure Location: ", "Calgary (YYC)"));
-        middleCard.add(createDetailRow("Departure Time: ", "13:30"));
-        middleCard.add(Box.createVerticalStrut(4));
-        middleCard.add(createDetailRow("Arrival Location: ", "Vancouver (YVR)"));
-        middleCard.add(createDetailRow("Arrival Time: ", "13:30"));
-        middleCard.add(Box.createVerticalStrut(4));
-        middleCard.add(createDetailRow("Departure Date: ", "2025-12-20"));
-        middleCard.add(Box.createVerticalStrut(4));
-        middleCard.add(createDetailRow("Seat Number: ", "12A"));
-        middleCard.add(Box.createVerticalStrut(4));
-        middleCard.add(createDetailRow("Checked Bags: ", "2"));
-        middleCard.add(Box.createVerticalStrut(4));
-        middleCard.add(createDetailRow("Status: ", "Confirmed"));
+            int confirmationNum = (int)(Math.random() * 900000) + 100000;
+            Booking booking = new Booking(confirmationNum, flight, new ArrayList<>());
 
-        rightSide.add(middleCard);
+            boolean ok = dao.addBooking(booking, customer.getId());
 
-        // ================================
-        // RIGHT COLUMN (ACTIONS)
-        // ================================
-        JPanel rightCard = new JPanel();
-        rightCard.setLayout(new BoxLayout(rightCard, BoxLayout.Y_AXIS));
-        rightCard.setBackground(Color.WHITE);
-        rightCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
-
-        JLabel actionsTitle = new JLabel("Actions");
-        actionsTitle.setFont(SECTION_TITLE_FONT);
-        actionsTitle.setForeground(new Color(50, 50, 50));
-        actionsTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        rightCard.add(actionsTitle);
-        rightCard.add(Box.createVerticalStrut(15));
-
-        String[] buttonNames = {
-                "Modify Seat Number",
-                "Change Number of Checked Bags",
-                "Cancel Reservation"
-        };
-
-        for (String name : buttonNames) {
-            JButton btn = new JButton(name);
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-
-            // **ACTION LISTENER FOR BAGS**
-            if (name.equals("Change Number of Checked Bags")) {
-                btn.addActionListener(e -> openBagChangeWindow());
+            if (ok) {
+                JOptionPane.showMessageDialog(this, "Booking Confirmed. Confirmation #: " + confirmationNum);
+            } else {
+                JOptionPane.showMessageDialog(this, "Booking Failed.");
             }
+        });
 
-            rightCard.add(btn);
-            rightCard.add(Box.createVerticalStrut(15));
-        }
+        middleCard.add(Box.createVerticalStrut(20));
+        middleCard.add(confirmBtn);
 
-        rightSide.add(rightCard);
-
-        // ================================
-        // BOTTOM "BACK" BUTTON
-        // ================================
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         bottomPanel.setBackground(BG_COLOR);
 
-        JButton backButton = new JButton("Go Back to Homepage");
-        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> {
             dispose();
-            new HomePage().setVisible(true);
+            new HomePage(customer).setVisible(true);
         });
 
         JPanel rightAlign = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -188,54 +103,123 @@ public class ReservationsPage extends JFrame {
         setVisible(true);
     }
 
-    // ====================================================
-    // POPUP WINDOW FOR MODIFYING CHECKED BAGS
-    // ====================================================
-    private void openBagChangeWindow() {
-        JFrame bagFrame = new JFrame("Modify Checked Bags");
-        bagFrame.setSize(350, 180);
-        bagFrame.setLocationRelativeTo(this);
+    // Constructor for viewing existing reservations
+    public ReservationsPage(Customer customer, List<BookingSummary> bookings) {
+        this.customer = customer;
+        this.bookings = bookings;
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        setTitle("My Reservations");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel label = new JLabel("Enter new number of checked bags:");
-        label.setFont(new Font("Arial", Font.BOLD, 14));
+        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 100;
+        setSize(screenWidth, screenHeight);
+        setLocationRelativeTo(null);
 
-        // Spinner for number of bags (with arrows)
-        SpinnerNumberModel model = new SpinnerNumberModel(2, 0, 10, 1);
-        JSpinner bagSpinner = new JSpinner(model);
-        Dimension spinnerSize = new Dimension(80, 28);
-        bagSpinner.setMaximumSize(spinnerSize);
-        bagSpinner.setPreferredSize(spinnerSize);
-        bagSpinner.setMinimumSize(spinnerSize);
+        getContentPane().setBackground(BG_COLOR);
+        setLayout(new BorderLayout(10, 10));
 
-        JButton saveBtn = new JButton("Save");
-        saveBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(BG_COLOR);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        saveBtn.addActionListener(e -> {
-            int newVal = (int) bagSpinner.getValue();
+        JLabel headerTitle = new JLabel("My Reservations");
+        headerTitle.setFont(TITLE_FONT);
+        headerTitle.setForeground(Color.WHITE);
 
-            JOptionPane.showMessageDialog(bagFrame,
-                    "Number of checked bags updated to: " + newVal);
+        headerPanel.add(headerTitle, BorderLayout.WEST);
+        add(headerPanel, BorderLayout.NORTH);
 
-            bagFrame.dispose();
+        JPanel rightSide = new JPanel(new BorderLayout());
+        rightSide.setBackground(BG_COLOR);
+        add(rightSide, BorderLayout.CENTER);
+
+        JPanel leftColumn = new JPanel();
+        leftColumn.setLayout(new BoxLayout(leftColumn, BoxLayout.Y_AXIS));
+        leftColumn.setBackground(BG_COLOR);
+
+        JLabel leftTitle = new JLabel("Your Bookings");
+        leftTitle.setFont(SECTION_TITLE_FONT);
+        leftTitle.setForeground(Color.WHITE);
+        leftTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        leftColumn.add(leftTitle);
+        leftColumn.add(Box.createVerticalStrut(10));
+
+        for (BookingSummary b : bookings) {
+            JButton btn = new JButton("Reservation #" + b.getConfirmationNumber());
+            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btn.setMaximumSize(new Dimension(180, 30));
+
+            btn.addActionListener(e -> showBookingDetails(b));
+
+            leftColumn.add(btn);
+            leftColumn.add(Box.createVerticalStrut(5));
+        }
+
+        JScrollPane leftScroll = new JScrollPane(leftColumn);
+        leftScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        leftScroll.setPreferredSize(new Dimension(230, screenHeight));
+        leftScroll.getViewport().setBackground(BG_COLOR);
+
+        add(leftScroll, BorderLayout.WEST);
+
+        middleCard = new JPanel();
+        middleCard.setLayout(new BoxLayout(middleCard, BoxLayout.Y_AXIS));
+        middleCard.setBackground(Color.WHITE);
+        middleCard.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        rightSide.add(middleCard, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(BG_COLOR);
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            dispose();
+            new HomePage(customer).setVisible(true);
         });
 
-        panel.add(label);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(bagSpinner);
-        panel.add(Box.createVerticalStrut(15));
-        panel.add(saveBtn);
+        JPanel rightAlign = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightAlign.setBackground(BG_COLOR);
+        rightAlign.add(backButton);
 
-        bagFrame.add(panel);
-        bagFrame.setVisible(true);
+        bottomPanel.add(rightAlign, BorderLayout.EAST);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
     }
 
-    // ================================
-    // DETAIL ROW BUILDER
-    // ================================
+    private void showSingleFlightDetails(Flight f) {
+        middleCard.removeAll();
+
+        middleCard.add(createDetailRow("Flight Number:", f.getFlightID()));
+        middleCard.add(createDetailRow("Departure:", f.getOrigin()));
+        middleCard.add(createDetailRow("Destination:", f.getDestination()));
+        middleCard.add(createDetailRow("Date:", f.getDate()));
+        middleCard.add(createDetailRow("Time:", f.getDepartureTime()));
+        middleCard.add(createDetailRow("Arrival:", f.getArrivalTime()));
+        middleCard.add(createDetailRow("Price:", "$" + f.getPrice()));
+
+        middleCard.revalidate();
+        middleCard.repaint();
+    }
+
+    private void showBookingDetails(BookingSummary b) {
+        Flight f = b.getFlight();
+
+        middleCard.removeAll();
+
+        middleCard.add(createDetailRow("Confirmation #:", String.valueOf(b.getConfirmationNumber())));
+        middleCard.add(createDetailRow("Departure:", f.getOrigin()));
+        middleCard.add(createDetailRow("Arrival:", f.getDestination()));
+        middleCard.add(createDetailRow("Date:", f.getDate()));
+        middleCard.add(createDetailRow("Time:", f.getDepartureTime()));
+        middleCard.add(createDetailRow("Seats Booked:", String.valueOf(b.getSeatsBooked())));
+
+        middleCard.revalidate();
+        middleCard.repaint();
+    }
+
     private JPanel createDetailRow(String labelText, String valueText) {
         JPanel row = new JPanel(new BorderLayout());
         row.setOpaque(false);

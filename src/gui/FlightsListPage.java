@@ -2,21 +2,18 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.List;
-
-import controller.BookingController;
 
 import model.Customer;
 import model.Flight;
-import model.Plane;
-import model.SeatMap;
 
-// A simple GUI to test bookings and seat map
 public class FlightsListPage extends JFrame {
 
-    public FlightsListPage(List<Flight> flights) {
+    private Customer currentCustomer;
+
+    public FlightsListPage(Customer customer, List<Flight> flights) {
+        this.currentCustomer = customer;
+
         setTitle("Flight Lists Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -28,21 +25,30 @@ public class FlightsListPage extends JFrame {
         getContentPane().setBackground(bg);
         setLayout(new BorderLayout());
 
-        // ===== TOP BAR WITH SEPARATED BUTTONS =====
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(bg);
 
-        // Left side: Promotion
+        // Promotion popup directly
         JButton promotionButton = new JButton("Promotion!");
+        promotionButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Special Monthly Offer!\n\n" +
+                    "Get 15% off all domestic flights booked this week.\n" +
+                    "Hurry — limited time offer!",
+                    "Monthly Promotion",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        });
+
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setBackground(bg);
         leftPanel.add(promotionButton);
 
-        // Right side: Back to Home
         JButton backButton = new JButton("Back to Home");
         backButton.addActionListener(e -> {
             dispose();
-            new HomePage().setVisible(true);
+            new HomePage(currentCustomer).setVisible(true);
         });
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -54,13 +60,9 @@ public class FlightsListPage extends JFrame {
 
         add(topBar, BorderLayout.SOUTH);
 
-        // ---- MAIN PANEL ----
         JPanel mainPanel = new JPanel(new GridLayout(1, 1));
         add(mainPanel, BorderLayout.CENTER);
 
-        // =========================
-        // LEFT COLUMN (SCROLLABLE)
-        // =========================
         JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setBackground(bg);
@@ -76,7 +78,6 @@ public class FlightsListPage extends JFrame {
 
         int panelHeight = screenHeight / 4;
 
-        // ---- FLIGHT CARD PANES ----
         for (Flight f : flights) {
             JPanel whitePane = new JPanel();
             whitePane.setPreferredSize(new Dimension(300, panelHeight));
@@ -88,26 +89,23 @@ public class FlightsListPage extends JFrame {
             leftInfo.setLayout(new BoxLayout(leftInfo, BoxLayout.Y_AXIS));
             leftInfo.setBackground(Color.WHITE);
 
-            JLabel airlineLabel  = new JLabel(f.getPlane().getAirline());
-            JLabel cityLabel     = new JLabel(f.getOrigin() + " → " + f.getDestination());
-            JLabel fromLabel     = new JLabel("Departure: " + f.getDate() + " " + f.getDepartureTime());
-            JLabel toLabel       = new JLabel("Arrival: " + f.getArrivalTime());
-            JLabel flightNumber  = new JLabel("Flight Number: " + f.getFlightID());
-
-            leftInfo.add(airlineLabel);
-            leftInfo.add(cityLabel);
-            leftInfo.add(fromLabel);
-            leftInfo.add(toLabel);
-            leftInfo.add(flightNumber);
+            leftInfo.add(new JLabel(f.getPlane().getAirline()));
+            leftInfo.add(new JLabel(f.getOrigin() + " → " + f.getDestination()));
+            leftInfo.add(new JLabel("Departure: " + f.getDate() + " " + f.getDepartureTime()));
+            leftInfo.add(new JLabel("Arrival: " + f.getArrivalTime()));
+            leftInfo.add(new JLabel("Flight Number: " + f.getFlightID()));
 
             JPanel rightInfo = new JPanel();
             rightInfo.setLayout(new BoxLayout(rightInfo, BoxLayout.Y_AXIS));
             rightInfo.setBackground(Color.WHITE);
 
-            JLabel price = new JLabel("$" + f.getPrice());
-            JButton bookButton = new JButton("Book Now");
+            rightInfo.add(new JLabel("$" + f.getPrice()));
 
-            rightInfo.add(price);
+            JButton bookButton = new JButton("Book Now");
+            bookButton.addActionListener(e -> {
+                new ReservationsPage(currentCustomer, f).setVisible(true);
+            });
+
             rightInfo.add(Box.createVerticalGlue());
             rightInfo.add(bookButton);
 
@@ -117,7 +115,6 @@ public class FlightsListPage extends JFrame {
             innerPanel.add(Box.createVerticalStrut(10));
             innerPanel.add(whitePane);
         }
-
 
         JPanel leftOuter = new JPanel(new BorderLayout());
         leftOuter.setBackground(bg);
@@ -130,7 +127,6 @@ public class FlightsListPage extends JFrame {
         scrollPane.getViewport().setBackground(bg);
 
         mainPanel.add(scrollPane);
-
         setVisible(true);
     }
 }

@@ -1,19 +1,24 @@
 package gui;
 
 import javax.swing.*;
-
 import dao.flights_dao;
+import dao.bookings_dao;
+import model.Customer;
 import model.Flight;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
+import java.util.ArrayList;
 
 public class HomePage extends JFrame {
 
-    public HomePage() {
+    private Customer currentCustomer;
+
+    public HomePage(Customer customer) {
+        this.currentCustomer = customer;
+
         setTitle("Flight Booking System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -21,38 +26,24 @@ public class HomePage extends JFrame {
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 100;
         setSize(screenWidth, screenHeight);
 
-        // ================================
-        // BACKGROUND COLOR
-        // ================================
-        getContentPane().setBackground(new Color(90, 200, 200)); // LIGHT BLUE
+        getContentPane().setBackground(new Color(90, 200, 200));
         setLayout(new BorderLayout());
 
-        // ================================
-        // OUTER CENTER PANEL
-        // ================================
         JPanel outer = new JPanel(new GridBagLayout());
-        outer.setOpaque(false); // transparent to show background
+        outer.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // ================================
-        // COLUMN PANEL (VERTICAL)
-        // ================================
         JPanel column = new JPanel();
         column.setOpaque(false);
         column.setLayout(new BoxLayout(column, BoxLayout.Y_AXIS));
 
-        // ================================
-        // INNER ROW (HORIZONTAL INPUT BAR)
-        // ================================
         JPanel row = new JPanel();
         row.setOpaque(false);
         row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
 
-        // COMMON STYLE
         Color fieldBg = new Color(255, 255, 255);
         Color textBlack = Color.BLACK;
 
-        // FROM PANEL
         JPanel fromPanel = new JPanel();
         fromPanel.setOpaque(false);
         fromPanel.setLayout(new BoxLayout(fromPanel, BoxLayout.Y_AXIS));
@@ -66,7 +57,6 @@ public class HomePage extends JFrame {
         fromPanel.add(fromLabel);
         fromPanel.add(fromField);
 
-        // TO PANEL
         JPanel toPanel = new JPanel();
         toPanel.setOpaque(false);
         toPanel.setLayout(new BoxLayout(toPanel, BoxLayout.Y_AXIS));
@@ -80,7 +70,6 @@ public class HomePage extends JFrame {
         toPanel.add(toLabel);
         toPanel.add(toField);
 
-        // DATE PANEL
         JPanel datePanel = new JPanel();
         datePanel.setOpaque(false);
         datePanel.setLayout(new BoxLayout(datePanel, BoxLayout.Y_AXIS));
@@ -100,13 +89,11 @@ public class HomePage extends JFrame {
         datePanel.add(dateLabel);
         datePanel.add(dateSpinner);
 
-        // SEARCH BUTTON PANEL
         JPanel searchPanel = new JPanel();
         searchPanel.setOpaque(false);
         JButton searchBtn = new JButton("Search");
         searchPanel.add(searchBtn);
 
-        // Add all to row
         row.add(fromPanel);
         row.add(Box.createHorizontalStrut(30));
         row.add(toPanel);
@@ -115,7 +102,6 @@ public class HomePage extends JFrame {
         row.add(Box.createHorizontalStrut(30));
         row.add(searchPanel);
 
-        // RESERVATIONS BUTTON PANEL
         JPanel resPanel = new JPanel();
         resPanel.setOpaque(false);
         JButton reservationsBtn = new JButton("See List of Reservations");
@@ -128,20 +114,15 @@ public class HomePage extends JFrame {
         outer.add(column, gbc);
         add(outer, BorderLayout.CENTER);
 
-        reservationsBtn.addActionListener(e-> {
-            dispose();
-            new ReservationsPage().setVisible(true);
-        });
-
-        // BOTTOM LOGOUT BUTTON
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setOpaque(false);
         JButton logoutBtn = new JButton("Logout");
         bottomPanel.add(logoutBtn, BorderLayout.EAST);
 
+        // SEARCH FLIGHTS
         searchBtn.addActionListener(e -> {
             String origin = fromField.getText().trim();
-            String dest   = toField.getText().trim();
+            String dest = toField.getText().trim();
 
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
             String date = fmt.format((Date) dateSpinner.getValue());
@@ -150,7 +131,24 @@ public class HomePage extends JFrame {
             List<Flight> results = dao.searchFlights(origin, dest, date);
 
             dispose();
-            new FlightsListPage(results).setVisible(true);
+            new FlightsListPage(currentCustomer, results).setVisible(true);
+        });
+
+        // VIEW RESERVATIONS
+        reservationsBtn.addActionListener(e -> {
+            bookings_dao dao = new bookings_dao();
+            int userID = currentCustomer.getId();
+
+            List<Integer> confNums = dao.getBookingConfirmationNumbersForUser(userID);
+            List<bookings_dao.BookingSummary> list = new ArrayList<>();
+
+            for (int c : confNums) {
+                bookings_dao.BookingSummary s = dao.getBookingSummary(c);
+                if (s != null) list.add(s);
+            }
+
+            dispose();
+            new ReservationsPage(currentCustomer, list).setVisible(true);
         });
 
         logoutBtn.addActionListener(e -> {
@@ -159,7 +157,6 @@ public class HomePage extends JFrame {
         });
 
         add(bottomPanel, BorderLayout.SOUTH);
-
         setVisible(true);
     }
 }
