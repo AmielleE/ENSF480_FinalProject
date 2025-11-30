@@ -25,17 +25,16 @@ public class FlightsListPage extends JFrame {
         getContentPane().setBackground(bg);
         setLayout(new BorderLayout());
 
+        // ===== TOP BAR =====
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(bg);
 
-        // Promotion popup directly
+        // Promotion button
         JButton promotionButton = new JButton("Promotion!");
         promotionButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(
                     this,
-                    "Special Monthly Offer!\n\n" +
-                    "Get 15% off all domestic flights booked this week.\n" +
-                    "Hurry — limited time offer!",
+                    "Special Monthly Offer!\n\nGet 15% off all domestic flights booked this week.\nHurry — limited time offer!",
                     "Monthly Promotion",
                     JOptionPane.INFORMATION_MESSAGE
             );
@@ -45,6 +44,7 @@ public class FlightsListPage extends JFrame {
         leftPanel.setBackground(bg);
         leftPanel.add(promotionButton);
 
+        // Back button
         JButton backButton = new JButton("Back to Home");
         backButton.addActionListener(e -> {
             dispose();
@@ -60,6 +60,9 @@ public class FlightsListPage extends JFrame {
 
         add(topBar, BorderLayout.SOUTH);
 
+        // =========================
+        // MAIN PANEL
+        // =========================
         JPanel mainPanel = new JPanel(new GridLayout(1, 1));
         add(mainPanel, BorderLayout.CENTER);
 
@@ -89,23 +92,32 @@ public class FlightsListPage extends JFrame {
             leftInfo.setLayout(new BoxLayout(leftInfo, BoxLayout.Y_AXIS));
             leftInfo.setBackground(Color.WHITE);
 
-            leftInfo.add(new JLabel(f.getPlane().getAirline()));
-            leftInfo.add(new JLabel(f.getOrigin() + " → " + f.getDestination()));
-            leftInfo.add(new JLabel("Departure: " + f.getDate() + " " + f.getDepartureTime()));
-            leftInfo.add(new JLabel("Arrival: " + f.getArrivalTime()));
-            leftInfo.add(new JLabel("Flight Number: " + f.getFlightID()));
+            JLabel airlineLabel  = new JLabel(f.getPlane().getAirline());
+            JLabel cityLabel     = new JLabel(f.getOrigin() + " → " + f.getDestination());
+            JLabel fromLabel     = new JLabel("Departure: " + f.getDate() + " " + f.getDepartureTime());
+            JLabel toLabel       = new JLabel("Arrival: " + f.getArrivalTime());
+            JLabel flightNumber  = new JLabel("Flight Number: " + f.getFlightID());
+
+            leftInfo.add(airlineLabel);
+            leftInfo.add(cityLabel);
+            leftInfo.add(fromLabel);
+            leftInfo.add(toLabel);
+            leftInfo.add(flightNumber);
 
             JPanel rightInfo = new JPanel();
             rightInfo.setLayout(new BoxLayout(rightInfo, BoxLayout.Y_AXIS));
             rightInfo.setBackground(Color.WHITE);
 
-            rightInfo.add(new JLabel("$" + f.getPrice()));
-
+            JLabel price = new JLabel("$" + f.getPrice());
             JButton bookButton = new JButton("Book Now");
+
+            // IMPORTANT FIX: close this window before opening ReservationsPage
             bookButton.addActionListener(e -> {
+                dispose();
                 new ReservationsPage(currentCustomer, f).setVisible(true);
             });
 
+            rightInfo.add(price);
             rightInfo.add(Box.createVerticalGlue());
             rightInfo.add(bookButton);
 
@@ -127,6 +139,7 @@ public class FlightsListPage extends JFrame {
         scrollPane.getViewport().setBackground(bg);
 
         mainPanel.add(scrollPane);
+
         setVisible(true);
     }
 }
