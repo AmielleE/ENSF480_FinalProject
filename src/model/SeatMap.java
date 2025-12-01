@@ -12,8 +12,7 @@ public class SeatMap {
         seatsOccupied = new boolean[plane.getRows()][plane.getCols()];
     }
 
-    // Book a seat using label like 2A
-    public boolean bookSeat(String seatLabel) {
+    public boolean bookSeat(String seatLabel) { //to book a seat using label like 2A
         int row = Integer.parseInt(seatLabel.substring(0, seatLabel.length() - 1)) - 1;
         int col = seatLabel.charAt(seatLabel.length() - 1) - 'A';
 
@@ -79,6 +78,6 @@ public class SeatMap {
             return false;
         }
 
-        return !seatsOccupied[row][col]; // true if not occupied
+        return !seatsOccupied[row][col]; // true if seat is empty
     }
 }

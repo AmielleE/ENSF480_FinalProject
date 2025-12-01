@@ -12,6 +12,8 @@ import model.Customer;
 import model.Flight;
 import model.Plane;
 
+//This page contains the operations to make a booking (reservation) for a customer
+
 public class ReservationsPage extends JFrame {
 
     private static final Color BG_COLOR = new Color(90, 200, 200);

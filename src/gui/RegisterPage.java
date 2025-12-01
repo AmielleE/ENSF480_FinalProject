@@ -5,6 +5,8 @@ import java.awt.*;
 import dao.users_dao;
 import model.Customer;
 
+//This page is used for creating new customer users
+
 public class RegisterPage extends JFrame {
 
     private JTextField firstNameField;

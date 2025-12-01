@@ -12,6 +12,8 @@ import model.*;
 import gui.*;
 import controller.*;
 
+//This page is shown at the very beginning of the application to login
+
 public class LoginPage extends JFrame {
 
     private JTextField usernameField;
@@ -22,7 +24,7 @@ public class LoginPage extends JFrame {
     private users_dao userDao = new users_dao();
 
     public LoginPage() {
-        setTitle("Login Page");
+        setTitle("Flight Booking System");
         setSize(500, 350);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
