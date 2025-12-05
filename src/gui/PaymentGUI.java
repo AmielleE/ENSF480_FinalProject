@@ -15,11 +15,13 @@ public class PaymentGUI extends JFrame {
     private JTextField securityCodeField;
     private JTextField expiryField;
     private JTextField emailField;
+    private Customer customer;
 
     private PaymentController controller;
 
-    public PaymentGUI() {
+    public PaymentGUI(Customer customer) {
         super("Flight Booking System");
+        this.customer = customer;
 
         controller = new PaymentController();
 
@@ -76,6 +78,9 @@ public class PaymentGUI extends JFrame {
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE
                 );
+
+                dispose();
+                new HomePage(customer).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(
                         this,
@@ -93,9 +98,5 @@ public class PaymentGUI extends JFrame {
                     JOptionPane.ERROR_MESSAGE
             );
         }
-    }
-
-    public static void main(String[] args) {
-        new PaymentGUI().setVisible(true);
     }
 }

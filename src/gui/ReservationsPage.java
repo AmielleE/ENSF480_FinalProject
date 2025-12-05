@@ -249,8 +249,12 @@ public class ReservationsPage extends JFrame {
         if (ok) {
             JOptionPane.showMessageDialog(this,
                     "Booking confirmed! Confirmation #: " + confirmationNum);
+
             dispose();
-            new HomePage(customer).setVisible(true);
+
+            PaymentGUI paymentPage = new PaymentGUI(customer);
+            paymentPage.setVisible(true);
+
         } else {
             JOptionPane.showMessageDialog(this,
                     "Booking failed. Please try again.",
